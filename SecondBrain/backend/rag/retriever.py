@@ -1,5 +1,24 @@
 # 向量检索
 
-# 负责两件事：
-# - 用 query embedding 检索最相关子块
-# - 回溯父块，返回可供 LLM 阅读的上下文
+# 用户问题
+#     |
+#     v
+# Embedding模型
+#     |
+#     v
+# query_vector
+#     |
+#     v
+# pgvector 查询 child_chunks
+#     |
+#     v
+# 得到 child.parent_id
+#     |
+#     v
+# 查询 parent_chunks
+#     |
+#     v
+# 返回父块上下文
+#     |
+#     v
+# LLM回答

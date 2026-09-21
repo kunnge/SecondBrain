@@ -2,14 +2,8 @@
 from fastapi import FastAPI
 
 from backend.app import health, upload, chat
-from backend.database.database import init_db
-
-# 服务启动时，初始化数据库（建扩展、建表）
-print("开始初始化数据库")
-init_db()
-print("初始化完成")
+from fastapi.middleware.cors import CORSMiddleware
 # 创建 FastAPI 应用对象
-# 以后所有接口都会挂载到这个 app 上
 
 
 app = FastAPI(
@@ -30,6 +24,18 @@ app = FastAPI(
     # debug=True,
 )
 
+# ===========================
+# 配置跨域
+# ===========================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8011"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 导入三个接口模块（Router）
 # ===========================
