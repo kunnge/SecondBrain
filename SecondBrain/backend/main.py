@@ -1,14 +1,12 @@
 # 导入 FastAPI 框架
 from fastapi import FastAPI
 
-from backend.app import health, upload, chat
+from app import health, upload, chat
 from fastapi.middleware.cors import CORSMiddleware
 # 创建 FastAPI 应用对象
 
-
 app = FastAPI(
 # swagger的配置
-
     # API 名称
     # 会显示在 Swagger 文档页面顶部
     title="知识库 Agent",
@@ -24,9 +22,7 @@ app = FastAPI(
     # debug=True,
 )
 
-# ===========================
 # 配置跨域
-# ===========================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -38,9 +34,7 @@ app.add_middleware(
 )
 
 # 导入三个接口模块（Router）
-# ===========================
 # 注册路由（接口）
-# ===========================
 
 # 注册健康检查接口
 # 例如：

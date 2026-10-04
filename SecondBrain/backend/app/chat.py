@@ -1,7 +1,9 @@
-from backend.services import chat_service
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from typing import List, Optional
+
+from services.chat_service import chat_service
+
 
 # 后端对应的实体类
 class Message(BaseModel):
@@ -12,14 +14,14 @@ class ChatRequest(BaseModel):
     # 用户当前输入的问题
     query: str = Field(..., description="用户当前的问题")
     
-    # RAG 指定为notebook_id知识库（可选）
-    notebook_id: Optional[str] = Field(None, description="指定的笔记或知识库ID，如果不填则检索全部")
+    # 指定文档ID，不传则检索全部文档（可选）
+    document_id: Optional[str] = Field(None, description="指定文档ID，不传则检索全部文档")
     
-    # 上下文记忆（可选）
-    history: Optional[List[Message]] = Field(default=[], description="历史对话记录")
-    
-    # 控制检索数量
-    top_k: Optional[int] = Field(default=4, description="检索相关的知识片段数量")
+    # 历史对话记录（可选）
+    history: Optional[List[Message]] = Field( default_factory=list, description="历史对话记录")
+
+    # 最终返回给大模型的 Parent 数量
+    top_k: Optional[int] = Field(default=4, ge=1,le=20, description="最终返回的知识片段数量")
 
 # 聊天业务接口
 router = APIRouter()

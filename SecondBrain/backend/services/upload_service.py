@@ -1,301 +1,220 @@
-from fastapi import UploadFile, HTTPException
-from langchain_community.document_loaders import TextLoader
-from sentence_transformers import SentenceTransformer
-from sqlalchemy import create_engine,text,Column,String,Text,DateTime,ForeignKey
-from sqlalchemy.orm import relationship, sessionmaker, declarative_base, Session
-from sqlalchemy.dialects.postgresql import JSONB
-from pgvector.sqlalchemy import Vector
-import shutil
-import uuid
+import json
 from pathlib import Path
 from typing import List
-from datetime import datetime
-from backend.rag.chunk import AdvancedRAGSplitter
+from fastapi import UploadFile, HTTPException
+from langchain_core.documents import Document as LangchainDocument
+from sqlalchemy.orm import Session
+from db.models import Document, DocumentChunk
+from rag.chunk import AdvancedRAGSplitter
+from rag.retriever import retriever
+from services.embedding_service import embedding_service
 
-# 负责连接数据库
-class DatabaseManager:
-    # 创建 Base 基类
-    Base = declarative_base()
+# RAG 评测数据目录
+EVALUATION_DIR = Path("evaluation/evaluation_chunks")
+EVALUATION_DIR.mkdir(parents=True, exist_ok=True)
 
-    def __init__(self,database_url:str,pool_size:int = 10,max_overflow:int =20):
-        """
-           初始化数据库连接
-        """
-        self.database_url = database_url
-        # 创建 Engine
-        self.engine = create_engine(database_url,pool_pre_ping=True,pool_size=pool_size,max_overflow=max_overflow)
-        # 创建 Session 工厂
-        self.SessionLocal = sessionmaker(autocommit=False,autoflush=False,bind=self.engine)
-    def get_db(self):
-        """
-            给 FastAPI 接口提供数据库 Session（会话对象),可以操作数据库
-        """
-        db = self.SessionLocal()
-        try:
-            yield db
-        finally:
-            db.close()
-    def init_db(self):
-        """
-        初始化数据库
-        """
-        # 开启 pgvector
-        with self.engine.connect() as conn:
-            conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-            conn.commit()
-        # 创建所有表
-        self.Base.metadata.create_all(bind=self.engine)
-        print("数据库初始化完成")
-
-# 连接数据库并初始化
-db_manager=DatabaseManager("postgresql+psycopg2://postgres:postgres@localhost:5432/knowledge_base")
-db_manager.init_db()
-
-# Embedding 模型服务类
-class EmbeddingService:
-    def __init__(self):
-        # 获取项目根目录
-        BASE_DIR = Path(__file__).resolve().parent.parent
-        # 本地模型保存路径
-        self.model_path = BASE_DIR / "models" / "bge-small-zh-v1.5"
-        # 加载模型
-        if self.model_path.exists():
-            print("加载本地Embedding模型")
-            self.embedding_model = SentenceTransformer(str(self.model_path))
-        else:
-            print("下载Embedding模型")
-            self.embedding_model = SentenceTransformer("BAAI/bge-small-zh-v1.5")
-            print("模型下载完成")
-            # 保存模型到本地
-            self.embedding_model.save(str(self.model_path))
-    def embed_documents(self,texts:list[str]) -> list[list[float]]:
-        """
-            文档批量向量化：用于入库
-        """
-        vectors = self.embedding_model.encode(texts,normalize_embeddings=True)
-        return vectors.tolist()
-    def embed_query(self,text:str) -> list[float]:
-        """
-            用户问题向量化：用于检索
-        """
-        query = ("为这个句子生成表示以用于检索相关文章："+ text)
-        vector = self.embedding_model.encode(query,normalize_embeddings=True)
-        return vector.tolist()
-
-embedding_service = EmbeddingService()
-
-# 数据模型(数据表)
-
-# 1. 文档主表模型
-class Document(DatabaseManager.Base):
-    __tablename__ = 'documents'
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    filename = Column(String(255), nullable=False)
-
-    # 保存完整的 Markdown 纯文本内容
-    raw_content = Column(Text, nullable=True)
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    # 一对多关联：与 DocumentChunk 绑定
-    chunks = relationship("DocumentChunk", back_populates="document", cascade="all, delete-orphan")
-# 2. 文档切片 (Chunk) 模型 - 支持父子块逻辑
-class DocumentChunk(DatabaseManager.Base):
-    __tablename__ = 'document_chunks'
-
-    # 基础信息
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-
-    # 关联到 Document 表
-    document_id = Column(String(36), ForeignKey('documents.id'), nullable=False)
-
-    # 自关联外键：用于实现 Parent-Child (父子块) 逻辑
-    parent_id = Column(String(36), ForeignKey('document_chunks.id'), nullable=True)
-
-    # 文本内容与节点类型
-    text = Column(Text, nullable=False)
-    node_type = Column(String(50))
-
-    # 元数据 (如层级、标题等)
-    chunk_metadata = Column(JSONB)
-
-    # 向量字段：父块允许为空，子块存入 embedding
-    embedding = Column(Vector(512), nullable=True)
-
-    # 反向关联回 Document
-    document = relationship("Document", back_populates="chunks")
-
-    # 父子自关联关系：方便通过 chunk.children 获取该父块下的所有子块
-    children = relationship("DocumentChunk", backref="parent", remote_side=[id])
-
-
-# 临时上传目录
-UPLOAD_DIR = Path("backend/temp")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-# 上传业务
 class UploadService:
-    def parse_markdown(self, file: UploadFile) -> List[Document]:
-        """
-        根据上传的 Markdown 文件解析内容
-
-        :param file: 上传md文件
-        :return: LangChain Document列表
-        """
+    """读取上传的 Markdown 文件"""
+    def parse_markdown(self, file: UploadFile) -> List[LangchainDocument]:
         # 检查文件类型
-        if not file.filename.endswith(".md"):
-            raise HTTPException(status_code=400,detail="请上传 .md 文件")
-        # 临时文件路径
-        file_path = UPLOAD_DIR / file.filename
+        if not file.filename or not file.filename.endswith(".md"):
+            raise HTTPException(status_code=400, detail="请上传 .md 文件")
         try:
-            # 保存上传文件
-            with open(file_path, "wb") as buffer:shutil.copyfileobj(file.file,buffer)
-            # 创建文本加载器
-            loader = TextLoader(file_path=str(file_path),encoding="utf-8")
-            # 解析markdown
-            docs = loader.load()
-            # 添加metadata
-            for doc in docs:
-                doc.metadata["filename"] = file.filename
-            return docs
+            # 直接读取上传文件
+            content = file.file.read()
+            # UTF-8 解码
+            markdown_text = content.decode("utf-8")
+            # 创建 LangChain Document
+            document = LangchainDocument(
+                page_content=markdown_text,
+                metadata={"filename": file.filename}
+            )
+            return [document]
+        except UnicodeDecodeError:
+            raise HTTPException(status_code=400, detail="Markdown 文件必须使用 UTF-8 编码")
         except Exception as e:
-            raise HTTPException(status_code=500,detail=f"Markdown解析失败:{e}")
-        finally:
-            # 删除临时文件
-            if file_path.exists():
-                file_path.unlink()
-    def upload_markdown(self,file,db: Session):
-        """
-           上传md文件
+            raise HTTPException(status_code=500, detail=f"Markdown解析失败: {e}")
 
-           :param file: 上传文件
-           :param db: 数据库Session
-           """
-        # ① 解析 Markdown
-        md_text = self.parse_markdown(file)
+    """
+       获取 Markdown 章节路径
+       优先使用 Splitter 生成的 heading_path。
+       第一天 > 案例1：从网上搜索图片下载
+    """
+    @staticmethod
+    def get_heading_path(metadata: dict) -> str:
+        # 优先使用 heading_path
+        heading_path = metadata.get("heading_path")
+        if heading_path:
+            return heading_path
+        # 兼容旧数据
+        headers = []
+        for key, value in sorted(metadata.items(), key=lambda item: ( int(item[0][1:]) if isinstance(item[0], str) and item[0].startswith("H") and item[0][1:].isdigit() else 999 )):
+            if isinstance(key, str) and key.startswith("H") and key[1:].isdigit() and value:
+                headers.append(value)
+        return " > ".join(headers)
 
-        # 打印测试
-        for index, doc in enumerate(md_text, start=1):
-            print(f"===== 文档片段 {index} =====")
-            print(doc.page_content)
-            print("metadata:")
-            print(doc.metadata)
-            print("====================")
+    """获取 H1 / H2 / H3 等标题信息"""
+    @staticmethod
+    def get_headers(metadata: dict) -> dict:
+        return { key: value for key, value in metadata.items() if isinstance(key, str) and key.startswith("H") and key[1:].isdigit() }
 
-        # ② 文本切块
-        splitter=AdvancedRAGSplitter()
-        parent_chunks, child_chunks = splitter.process_documents(md_text)
-        # 打印查看结果
+    """保存当前上传文档的 RAG 评测数据"""
+    def save_evaluation_chunks( self, document: Document, parent_chunks, child_chunks, parent_id_map: dict, filename: str ):
+        # 1. Child 按数据库 Parent ID 分组
+        children_map = {}
+        for child in child_chunks:
+            database_parent_id = parent_id_map.get(child.parent_id)
+            if database_parent_id is None:
+                raise ValueError(f"找不到 Child 对应的数据库 Parent ID: {child.parent_id}")
+            children_map.setdefault(database_parent_id, []).append(child)
+        # 2. 构造评测数据
+        result = {
+            "document_id": document.id,
+            "filename": filename,
+            "parent_count": len(parent_chunks),
+            "child_count": len(child_chunks),
+            "parents": []
+        }
+        for parent_index, parent in enumerate(parent_chunks, start=1):
+            # Splitter Parent ID
+            splitter_parent_id = parent.parent_id
+            # 数据库 Parent ID
+            database_parent_id = parent_id_map.get(splitter_parent_id)
+            if database_parent_id is None:
+                raise ValueError(f"找不到数据库 Parent ID: {splitter_parent_id}")
+            metadata = parent.metadata or {}
+            # Parent
+            parent_data = {
+                "index": parent_index,
+                "parent_id": database_parent_id,
+                "document_id": document.id,
+                "heading_path": self.get_heading_path(metadata),
+                "headers": self.get_headers(metadata),
+                "content": parent.text,
+                "blocks": [ { "block_type": block_type, "content": block } for block_type, block in parent.blocks ],
+                "children": []
+            }
+            # Child
+            parent_children = children_map.get(database_parent_id, [])
+            for child_index, child in enumerate(parent_children, start=1):
+                parent_data["children"].append({
+                    "index": child_index,
+                    "child_id": child.child_id,
+                    "block_id": child.block_id,
+                    "block_type": child.block_type,
+                    "chunk_index": child.chunk_index,
+                    "content": child.text
+                })
+            result["parents"].append(parent_data)
 
-        # # 打印父块和子块切分结果
-        # print(f"✅ 一共切出了 {len(parent_chunks)} 个父块 + {len(child_chunks)} 个子块")
-        #
-        # # 打印父块
-        # print("\n" + "📦 父块信息".center(80, "="))
-        # for i, chunk in enumerate(parent_chunks, start=1):
-        #     print(f"\n🏷️  父块 {i}")
-        #     print(f"🆔 Parent ID: {chunk.parent_id}")
-        #     print(f"📂 Metadata: {chunk.metadata}")
-        #     print(f"📄 文本内容:")
-        #     print("-" * 80)
-        #     print(chunk.text)
-        #     print("-" * 80)
-        #
-        # # 打印子块
-        # print("\n" + "🧩 子块信息".center(80, "="))
-        # for i, chunk in enumerate(child_chunks, start=1):
-        #     print(f"\n🏷️  子块 {i}")
-        #     print(f"🆔 Parent ID: {chunk.parent_id}")
-        #     print(f"📂 Metadata: {chunk.metadata}")
-        #     print(f"📄 文本内容:")
-        #     print("-" * 80)
-        #     print(chunk.text)
-        #     print("-" * 80)
-        #
-        # print("=" * 80)
+        # 3. 根据上传文件名生成 JSON 文件名
+        original_filename = Path(filename).name
+        output_filename = f"{Path(original_filename).stem}.json"
+        output_path = EVALUATION_DIR / output_filename
+        # 4. 保存 JSON
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(result, f, ensure_ascii=False, indent=2)
+        print(f"✅ RAG评测数据已生成: {output_path}")
+        return output_path
 
-
-        # ③ 生成向量
-        # 提取所有子块文本
-        texts_to_embed = [chunk.text for chunk in child_chunks]
-        # 批量生成向量
-        vectors = embedding_service.embed_documents(texts_to_embed)
-        # 绑定向量
-        for chunk, vector in zip(child_chunks, vectors):
-            chunk.embedding = vector  # 给每个子块挂载 embedding 属性
-        # 打印测试验证
-        # print(f"✅ 成功为 {len(chunks)} 个文本块生成了向量，维度大小: {len(vectors[0])}")
-
-
-        # ④ 保存数据库 (PostgreSQL + pgvector)
+    """
+          保存到数据库： Parent + Child + Embedding → PostgreSQL
+           export_evaluation:
+               False：不生成评测数据
+               True：生成评测数据
+    """
+    def save_document(self,file,documents,parent_chunks,child_chunks,db: Session,export_evaluation: bool = False ):
         try:
-            # 1. 保存 Document 主表记录
-            # 假设你的 file 对象有 filename 属性 (比如 FastAPI 的 UploadFile)
+            # 获取文件名
             filename = getattr(file, "filename", "untitled.md")
-            # 💡 新增：把刚才解析好的 md_text 里面的内容拼接起来，作为完整原始内容
-            raw_content_str = "\n\n".join([doc.page_content for doc in md_text])
-
-            new_doc = Document(filename=filename,raw_content=raw_content_str)
+            # 1. 获取完整 Markdown 内容
+            raw_content = "\n\n".join(doc.page_content for doc in documents)
+            # 2. 创建 Document
+            new_doc = Document( filename=filename, raw_content=raw_content )
             db.add(new_doc)
-            db.flush()  # 刷入数据库，提前生成或确认 new_doc.id，但不提交事务
-
-            # 2. 先插入所有父块，flush 拿到真实数据库 id（父块不存向量，仅保留完整上下文供回溯）
+            # 获取 document_id
+            db.flush()
+            # 3. 保存 Parent Chunk
             parent_orm_chunks = []
             for chunk in parent_chunks:
-                parent_orm_chunks.append(DocumentChunk(
-                    # 关联刚才创建的文档 ID
-                    document_id=new_doc.id,
-                    # 提取文本与节点类型
-                    text=chunk.text,
-                    node_type=getattr(chunk, "node_type", "TextNode"),
-                    # 映射元数据 (注意你的模型里字段名叫 chunk_metadata)
-                    chunk_metadata=getattr(chunk, "metadata", {})
-                ))
+                parent_orm_chunks.append(DocumentChunk( document_id=new_doc.id, parent_id=None, block_id=None, block_type=None, chunk_index=None, text=chunk.text, chunk_metadata=chunk.metadata ) )
             db.add_all(parent_orm_chunks)
-            db.flush()  # 刷入数据库，拿到父块真实 id，但不提交事务
-
-            # 3. 建立映射：业务父块ID(p_xxx) -> 数据库真实ID(uuid)
+            # 获取数据库 Parent ID
+            db.flush()
+            # 4. 建立 Parent ID 映射
             parent_id_map = {}
             for chunk, orm in zip(parent_chunks, parent_orm_chunks):
                 parent_id_map[chunk.parent_id] = orm.id
-
-            # 4. 再插入所有子块，parent_id 指向真实存在的 document_chunks.id
+            # 5. 保存 Child Chunk
             child_orm_chunks = []
             for chunk in child_chunks:
-                child_orm_chunks.append(DocumentChunk(
-                    # 关联刚才创建的文档 ID
-                    document_id=new_doc.id,
-
-                    # 提取文本与节点类型
-                    text=chunk.text,
-                    node_type=getattr(chunk, "node_type", "TextNode"),
-
-                    # 映射元数据
-                    chunk_metadata=getattr(chunk, "metadata", {}),
-
-                    # 映射生成的向量
-                    embedding=getattr(chunk, "embedding", None),
-
-                    # 通过映射表换算成真实数据库父块 id，保证外键成立
-                    parent_id=parent_id_map[chunk.parent_id]
-                ))
-
+                database_parent_id = parent_id_map.get(chunk.parent_id)
+                if database_parent_id is None:
+                    raise ValueError(f"找不到 Parent ID: {chunk.parent_id}")
+                child_orm_chunks.append(
+                    DocumentChunk(
+                        document_id=new_doc.id,
+                        parent_id=database_parent_id,
+                        block_id=chunk.block_id,
+                        block_type=chunk.block_type,
+                        chunk_index=chunk.chunk_index,
+                        text=chunk.text,
+                        chunk_metadata=chunk.metadata,
+                        embedding=chunk.embedding
+                    )
+                )
             db.add_all(child_orm_chunks)
-            # 5. 提交事务
+            # 6. 提交数据库
             db.commit()
-
-            # 记录下生成的 Document ID
-            document_id = new_doc.id
-
+            # 7. 刷新 BM25 索引
+            retriever.refresh_bm25_index()
+            # 8. 根据参数生成评测数据
+            evaluation_path = None
+            if export_evaluation:
+                evaluation_path = self.save_evaluation_chunks( document=new_doc, parent_chunks=parent_chunks, child_chunks=child_chunks, parent_id_map=parent_id_map, filename=filename )
+            print(f"✅ 文档入库成功: {filename}")
+            return new_doc, evaluation_path
         except Exception as e:
-            # 如果中间任何一步报错（比如向量格式不对、断网等），回滚所有操作，避免产生垃圾数据
+            # 回滚数据库事务
             db.rollback()
-            print(f"数据库保存失败: {str(e)}")
-            raise e
+            print(f"❌ 文档入库失败: {e}")
+            raise
 
+    """
+           上传 Markdown 文件
+           export_evaluation:
+               False：正常上传，不生成评测数据
+               True：上传后生成评测数据
+    """
+    def upload_markdown( self,  file, db: Session, export_evaluation: bool = False ):
+
+        # 1. 解析 Markdown
+        documents = self.parse_markdown(file)
+        # 2. Markdown 切块
+        splitter = AdvancedRAGSplitter()
+        parent_chunks, child_chunks = splitter.process_documents(documents)
+        # 3. 构建 Embedding 文本
+        content_texts = []
+        for chunk in child_chunks:
+            metadata = chunk.metadata or {}
+            # 获取章节路径
+            heading_path = self.get_heading_path(metadata)
+            content_text = ( f"章节路径：\n" f"{heading_path}\n\n" f"正文：\n" f"{chunk.text}" )
+            content_texts.append(content_text)
+        # 4. 批量生成 Embedding
+        content_vectors = embedding_service.embed_documents(content_texts)
+        # 5. 绑定向量
+        for chunk, content_vector in zip(child_chunks, content_vectors):
+            chunk.embedding = content_vector
+        # 6. 保存 PostgreSQL
+        document, evaluation_path = self.save_document( file=file, documents=documents, parent_chunks=parent_chunks, child_chunks=child_chunks, db=db, export_evaluation=export_evaluation )
+        # 7. 返回结果
         return {
             "message": "上传成功",
-            "chunks": len(parent_chunks) + len(child_chunks)
+            "document_id": document.id,
+            "parent_chunks": len(parent_chunks),
+            "child_chunks": len(child_chunks),
+            "evaluation_file": str(evaluation_path) if evaluation_path else None
         }
-# 创建的导出对象
-upload_service=UploadService()
+
+upload_service = UploadService()
