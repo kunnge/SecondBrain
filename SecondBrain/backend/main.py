@@ -1,7 +1,7 @@
 # 导入 FastAPI 框架
 from fastapi import FastAPI
 
-from app import health, upload, chat
+from api import upload, chat, health, evaluation
 from fastapi.middleware.cors import CORSMiddleware
 # 创建 FastAPI 应用对象
 
@@ -37,13 +37,13 @@ app.add_middleware(
 # 注册路由（接口）
 
 # 注册健康检查接口
-# 例如：
 app.include_router(health.router)
 
 # 注册上传接口
-# 例如：
 app.include_router(upload.router)
 
 # 注册聊天接口
-# 例如：
 app.include_router(chat.router)
+
+# 注册测试接口
+app.include_router(evaluation.router)

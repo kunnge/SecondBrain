@@ -14,49 +14,51 @@ class ChatService:
         if not api_key:
             raise ValueError("未找到 DEEPSEEK_API_KEY，系统环境变量和 .env 文件中均未配置！")
         self.client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
-    def build_context(self, docs):
-        """
-        将 Retriever 返回的 Parent + 同章节上下文
-        组织成 LLM 可理解的 Context。
-        """
+
+    """将 Parent 和扩展后的 Child 上下文组织成 LLM Context"""
+    def build_context(self, docs, context_chunks):
         contexts = []
+        # 遍历 Reranker 返回的 Parent
         for index, doc in enumerate(docs, start=1):
-            metadata = doc.metadata or {}
-            # 章节信息
-            headers = []
-            for key, value in sorted(metadata.items(), key=lambda x: int(x[0][1:]) if (x[0].startswith("H") and x[0][1:].isdigit()) else 999):
-                if key.startswith("H") and value:
-                    headers.append(f"{key}: {value}")
-            chapter = "\n".join(headers)
-            # Parent 完整内容
-            content = doc.page_content.strip()
-            # 同章节上下文
-            context_chunks = metadata.get("context_chunks", [])
+            metadata = doc.get("chunk_metadata") or {}
+            # 获取章节路径
+            chapter = metadata.get("heading_path") or "无章节信息"
+            # 获取 Parent 核心内容
+            content = (doc.get("text") or "").strip()
+            # 获取当前 Parent 对应的上下文 Chunk
+            parent_id = doc.get("parent_id")
+            related_chunks = [ chunk for chunk in context_chunks if str(chunk.get("parent_id")) == str(parent_id) ]
             context_parts = []
-            for item in context_chunks:
-                context_content = (item.get("content") or "").strip()
-                if not context_content:
+            # 组织上下文 Chunk 内容
+            for chunk in related_chunks:
+                chunk_content = (chunk.get("text") or "").strip()
+                if not chunk_content:
                     continue
-                context_parts.append(context_content)
+                heading_path = chunk.get("heading_path") or ""
+                if heading_path:
+                    context_parts.append( f"【章节：{heading_path}】\n{chunk_content}" )
+                else:
+                    context_parts.append(chunk_content)
+            # 拼接补充上下文
             context_text = ""
             if context_parts:
-                context_text = "\n\n【补充上下文】\n" + "\n\n".join(context_parts)
+                context_text = ( "\n\n【补充上下文】\n" + "\n\n".join(context_parts) )
+            # 构建单个知识片段
             context = f"""
-            【知识片段 {index}】
-            
-            来源：
-            {metadata.get("filename", "未知")}
-            
-            章节：
-            {chapter if chapter else "无章节信息"}
-            
-            【核心知识】
-            {content}
-            {context_text}
-            """
+                    【知识片段 {index}】
+                    来源：
+                    {metadata.get("filename", "未知")}
+                    章节：
+                    {chapter}
+                    【核心知识】
+                    {content}
+                    {context_text}
+                    """
             contexts.append(context.strip())
+        # 没有检索到内容时返回提示
         if not contexts:
             return "没有找到相关知识内容。"
+        # 使用分隔线拼接多个知识片段
         return "\n\n--------------------\n\n".join(contexts)
     def build_prompt(self,query: str,context: str,history: list = None) -> list:
         """为 DeepSeek API 构造 messages。"""
@@ -92,144 +94,42 @@ class ChatService:
                     messages.append({"role": role, "content": content})
         messages.append({"role": "user", "content": query})
         return messages
+
     def chat(self, request):
         # 1. 用户问题
         query = request.query
         # 2. Query Embedding
         query_vector = embedding_service.embed_query(query)
         # 3. Retriever
-        docs = retriever.search(  query=query, vector=query_vector, child_top_k=3 * request.top_k, parent_top_k=request.top_k, document_id=request.document_id )
+        retrieval_result = retriever.search(
+            query=query,
+            vector=query_vector,
+            child_top_k=3 * request.top_k,
+            parent_top_k=request.top_k,
+            document_id=request.document_id
+        )
+        docs = retrieval_result["results"]
+        context_chunks = retrieval_result["context_chunks"]
         # 4. 构造上下文
-        context = self.build_context(docs)
+        context = self.build_context(docs,context_chunks)
         # 5. 构造 Prompt
-        prompt = self.build_prompt( query=query, context=context, history=request.history )
+        prompt = self.build_prompt(
+            query=query,
+            context=context,
+            history=request.history
+        )
         # 6. 调用 DeepSeek
-        response = self.client.chat.completions.create( model="deepseek-chat", messages=prompt, temperature=0.1, max_tokens=2048,  stream=False )
+        response = self.client.chat.completions.create(
+            model="deepseek-chat",
+            messages=prompt,
+            temperature=0.1,
+            max_tokens=2048,
+            stream=False
+        )
         # 7. 获取答案
         answer_text = response.choices[0].message.content
-        # 8. 构造 sources
-        sources = []
-        for doc in docs:
-            metadata = doc.metadata
-            sources.append({
-                # Parent ID
-                "id": metadata.get("parent_id"),
-                # Parent 完整内容
-                "content": doc.page_content,
-                # 来源文件
-                "filename": metadata.get("filename"),
-                # 文档 ID
-                "document_id": metadata.get("document_id"),
-                # 代表 Child 的向量距离
-                "distance": metadata.get("best_child_distance"),
-                # 全局 Content RRF
-                "global_content_rrf_score": metadata.get("global_content_rrf_score"),
-                # 章节内 Content RRF
-                "chapter_content_rrf_score": metadata.get("chapter_content_rrf_score"),
-                # Chapter / Child 结构关系
-                "relation_score": metadata.get("relation_score"),
-                # 最终检索分数
-                "retrieval_score": metadata.get("retrieval_score"),
-                # Reranker 分数
-                "rerank_score": metadata.get("rerank_score"),
-                # 当前 Parent 所属章节
-                "heading_path": metadata.get("heading_path"),
-                # 章节检索命中的章节
-                "chapter_candidates": metadata.get("chapter_candidates", []),
-                # 同章节补充内容
-                "context_chunks": metadata.get("context_chunks", [])
-            })
-        # 9. Retrieval 评测数据
-        retrieval_evaluation = []
-        for doc in docs:
-            metadata = doc.metadata
-            retrieval_evaluation.append({
-                "parent_id": metadata.get("parent_id"),
-                "retrieval_score": metadata.get("retrieval_score"),
-                "rerank_score": metadata.get("rerank_score"),
-                "best_child_distance": metadata.get("best_child_distance"),
-                "global_content_rrf_score": metadata.get("global_content_rrf_score"),
-                "chapter_content_rrf_score": metadata.get("chapter_content_rrf_score"),
-                "relation_score": metadata.get("relation_score")
-            })
-        # 10. Parent 评测数据
-        parent_evaluation = []
-        for doc in docs:
-            metadata = doc.metadata
-            parent_evaluation.append({
-                "parent_id": metadata.get("parent_id"),
-                "filename": metadata.get("filename"),
-                "document_id": metadata.get("document_id"),
-                "content": doc.page_content
-            })
-        # 11. Heading Path 评测数据
-        heading_path_evaluation = []
-        for doc in docs:
-            metadata = doc.metadata
-            heading_path_evaluation.append({
-                "parent_id": metadata.get("parent_id"),
-                "heading_path": metadata.get("heading_path")
-            })
-        # 12. Neighbor Chunk 评测数据
-        neighbor_evaluation = []
-        for doc in docs:
-            metadata = doc.metadata
-            neighbor_evaluation.append({
-                "parent_id": metadata.get("parent_id"),
-                "context_chunks": metadata.get("context_chunks", [])
-            })
-        # 13. 统计信息
-        # Parent 数量
-        parent_count = len(docs)
-        # 唯一 Parent 数量
-        unique_parent_ids = {doc.metadata.get("parent_id") for doc in docs if doc.metadata.get("parent_id")}
-        unique_parent_count = len(unique_parent_ids)
-        # Neighbor Chunk 数量
-        neighbor_count = sum(len(doc.metadata.get("context_chunks", [])) for doc in docs)
-        # 所有 Chunk ID
-        all_chunk_ids = []
-        for doc in docs:
-            context_chunks = doc.metadata.get("context_chunks", [])
-            for chunk in context_chunks:
-                if isinstance(chunk, dict):
-                    chunk_id = chunk.get("chunk_id")
-                    if chunk_id:
-                        all_chunk_ids.append(chunk_id)
-        # Chunk 去重数量
-        unique_chunk_count = len(set(all_chunk_ids))
-        # 重复 Chunk 数量
-        duplicate_chunk_count = len(all_chunk_ids) - unique_chunk_count
-        # Context 长度
-        context_length = len(context)
-        # 14. RAG Evaluation
-        evaluation = {
-            # 检索阶段
-            "retrieval": retrieval_evaluation,
-            # Parent
-            "parent": parent_evaluation,
-            # Heading Path
-            "heading_path": heading_path_evaluation,
-            # Neighbor Chunk
-            "neighbor": neighbor_evaluation,
-            # 最终发送给 LLM 的 Context
-            "context": context,
-            # 最终答案
-            "answer": answer_text,
-            # 统计数据
-            "stats": {
-                "parent_count": parent_count,
-                "unique_parent_count": unique_parent_count,
-                "neighbor_count": neighbor_count,
-                "unique_chunk_count": unique_chunk_count,
-                "duplicate_chunk_count": duplicate_chunk_count,
-                "context_length": context_length
-            }
-        }
-        # 15. 返回结果
+        # 8. 只返回答案
         return {
-            "question": query,
-            "answer": answer_text,
-            "sources": sources,
-            "evaluation": evaluation
+            "answer": answer_text
         }
 chat_service = ChatService()
