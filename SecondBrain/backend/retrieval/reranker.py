@@ -8,11 +8,13 @@ from services.reranker_service import reranker_service
 #       ↓
 # Reranker
 #       ↓
+
+"""使用 Reranker 模型对 RRF 候选结果进行重排序"""
 class Reranker:
-    """使用 Reranker 模型对 RRF 候选结果进行重排序"""
+
+    """对 RRF 检索结果进行重排序"""
     @staticmethod
     def rerank(query: str, results: list[dict], top_k: int ):
-        """对 RRF 检索结果进行重排序"""
         # 没有候选结果时直接返回空列表
         if not results:
             return []

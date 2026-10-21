@@ -1,6 +1,7 @@
 from sqlalchemy import text
 
 from retrieval.context_expander import ContextExpander
+from config.settings import CONTEXT_MAX_CHUNKS_PER_PARENT, CONTEXT_MAX_TOTAL_CHUNKS, CONTEXT_NEIGHBOR_WINDOW, RERANK_MIN_PARENT_K, RETRIEVAL_CHILD_TOP_K, RETRIEVAL_PARENT_TOP_K
 
 
 #            Query
@@ -27,11 +28,10 @@ from retrieval.context_expander import ContextExpander
         # Parent
         # Top - K
 
-
+"""混合检索：Vector + BM25 + RRF + Parent 去重 + Reranker"""
 class HybridRetriever:
-    """混合检索：Vector + BM25 + RRF + Parent 去重 + Reranker"""
     # Reranker 最少保留的 Parent 候选数量
-    MIN_RERANK_PARENT_K = 12
+    MIN_RERANK_PARENT_K = RERANK_MIN_PARENT_K
     def __init__( self, engine, vector_search, bm25_search, rrf_fuser, reranker ):
         # 保存数据库连接引擎
         self.engine = engine
@@ -44,10 +44,9 @@ class HybridRetriever:
         # 使用外部创建好的 Reranker
         self.reranker = reranker
         # 上下文扩展器
-        self.context_expander = ContextExpander( engine=engine, neighbor_window=1, max_chunks_per_parent=3, max_total_chunks=12  )
-
-    def search( self, query: str, vector: list[float], child_top_k: int = 12, parent_top_k: int = 4, document_id: str | None = None,evaluation: bool = False ):
-        """执行完整混合检索流程"""
+        self.context_expander = ContextExpander(engine=engine, neighbor_window=CONTEXT_NEIGHBOR_WINDOW, max_chunks_per_parent=CONTEXT_MAX_CHUNKS_PER_PARENT, max_total_chunks=CONTEXT_MAX_TOTAL_CHUNKS)
+    """执行完整混合检索流程"""
+    def search( self, query: str, vector: list[float], child_top_k: int = RETRIEVAL_CHILD_TOP_K, parent_top_k: int = RETRIEVAL_PARENT_TOP_K, document_id: str | None = None,evaluation: bool = False ):
         # 1. 设置候选数量
         candidate_k = child_top_k
         # 2. Vector Search：根据向量相似度召回 Child
@@ -151,5 +150,3 @@ class HybridRetriever:
             return { "vector_results": vector_results, "bm25_results": bm25_results, "rrf_results": fused_children, "rerank_candidates": rerank_results,"context_chunks": context_chunks, "results": final_results }
         # 正常模式只返回最终结果
         return { "results": final_results, "context_chunks": context_chunks }
-
-

@@ -19,9 +19,9 @@ class Request {
   /**
    * 通用请求
    */
-  async request<T = any>(url: string, options: RequestOptions = {}): Promise<Result<T>> {
+  async request<T = any>(url: string, options: RequestOptions = {}): Promise<T> {
     const { params, headers, ...fetchOptions } = options
-    url = `${import.meta.env.VITE_API_BASE_URL}${url}`
+    url = `${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')}${url}`
     // 处理 GET 参数
     if (params) {
       const searchParams = new URLSearchParams()
@@ -44,11 +44,17 @@ class Request {
 
     // HTTP 请求失败
     if (!response.ok) {
-      throw new Error(`HTTP Error：${response.status}`)
+      const payload = await response.json().catch(() => null)
+      const detail = payload && typeof payload === 'object' && 'detail' in payload
+        ? String(payload.detail)
+        : payload && typeof payload === 'object' && 'message' in payload
+          ? String(payload.message)
+          : `HTTP Error：${response.status}`
+      throw new Error(detail)
     }
 
     // 返回统一格式
-    return response.json()
+    return response.json() as Promise<T>
   }
 
   /**
@@ -89,6 +95,9 @@ class Request {
    */
   put<T = any>(url: string, data?: any) {
     return this.request<T>(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'PUT',
       body: JSON.stringify(data),
     })
@@ -99,6 +108,9 @@ class Request {
    */
   delete<T = any>(url: string, data?: any) {
     return this.request<T>(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'DELETE',
       body: JSON.stringify(data),
     })
@@ -108,7 +120,7 @@ class Request {
    * AI 流式请求
    */
   async *stream(url: string, options: RequestOptions = {}): AsyncGenerator<string> {
-    const response = await fetch(url, {
+    const response = await fetch(`${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')}${url}`, {
       headers: {
         ...options.headers,
       },
@@ -116,7 +128,13 @@ class Request {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP Error：${response.status}`)
+      const payload = await response.json().catch(() => null)
+      const detail = payload && typeof payload === 'object' && 'detail' in payload
+        ? String(payload.detail)
+        : payload && typeof payload === 'object' && 'message' in payload
+          ? String(payload.message)
+          : `HTTP Error：${response.status}`
+      throw new Error(detail)
     }
 
     const reader = response.body?.getReader()
@@ -126,15 +144,25 @@ class Request {
     }
 
     const decoder = new TextDecoder()
+    let completed = false
+    try {
+      while (true) {
+        const { done, value } = await reader.read()
 
-    while (true) {
-      const { done, value } = await reader.read()
+        if (done) {
+          const finalChunk = decoder.decode()
+          if (finalChunk) yield finalChunk
+          completed = true
+          break
+        }
 
-      if (done) break
-
-      yield decoder.decode(value, {
-        stream: true,
-      })
+        yield decoder.decode(value, {
+          stream: true,
+        })
+      }
+    } finally {
+      if (!completed) await reader.cancel().catch(() => undefined)
+      reader.releaseLock()
     }
   }
 }

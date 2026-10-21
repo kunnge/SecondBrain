@@ -7,10 +7,11 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import matplotlib.pyplot as plt
 import pandas as pd
 import requests
+from config.settings import API_BASE_URL, EVALUATION_REQUEST_TIMEOUT
 
 
 # ==================== 配置 ====================
-API_URL = "http://localhost:8000/evaluation/retrieval"
+API_URL = f"{API_BASE_URL.rstrip('/')}/evaluation/retrieval"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEST_CASE_FILE = os.path.join(BASE_DIR, "test_cases.json")
 RESULT_DIR = os.path.join(BASE_DIR, "results")
@@ -20,7 +21,7 @@ ENABLE_HYBRID_EVALUATION = True
 ENABLE_RERANKER_EVALUATION = True
 ENABLE_CONTEXT_EVALUATION = True
 # 单次请求超时时间
-REQUEST_TIMEOUT = 60
+REQUEST_TIMEOUT = EVALUATION_REQUEST_TIMEOUT
 # ==================== 测试轮次 ====================
 """获取下一次 result 编号"""
 def get_run_id():

@@ -5,6 +5,7 @@ from marko.ext.gfm import gfm
 from marko.block import Heading, Paragraph, FencedCode, List as ListBlock
 from marko.ext.gfm.elements import Table
 import uuid
+from config.settings import CHILD_CHUNK_OVERLAP, CHILD_CHUNK_SIZE, PARENT_CHUNK_SIZE
 
 class ParentChunk:
     def __init__(self,blocks: List[Tuple[str, str]],metadata: dict):
@@ -22,8 +23,9 @@ class ChildChunk:
         self.chunk_index=chunk_index
         self.text = text
         self.metadata = metadata
+
 class AdvancedRAGSplitter:
-    def __init__( self, parent_chunk_size=1200, child_chunk_size=500, child_overlap=50 ):
+    def __init__( self, parent_chunk_size=PARENT_CHUNK_SIZE, child_chunk_size=CHILD_CHUNK_SIZE, child_overlap=CHILD_CHUNK_OVERLAP ):
         self.markdown_parser = gfm
         self.parent_chunk_size = parent_chunk_size
         self.child_chunk_size = child_chunk_size
@@ -34,20 +36,20 @@ class AdvancedRAGSplitter:
         self.header_stack: Dict[int, str] = {}
         # 当前文档的 Parent
         self.parent_chunks: List[ParentChunk] = []
+    """获取当前标题层级"""
     def _get_current_metadata(self) -> dict:
-        """获取当前标题层级"""
         metadata = { f"H{level}": title for level, title in sorted( self.header_stack.items()  ) }
         metadata["heading_path"] = " > ".join( title for _, title in sorted( self.header_stack.items() ) )
         return metadata
+    """从 Marko AST 节点中提取纯文本。"""
     def _extract_raw_text(self, node) -> str:
-        """从 Marko AST 节点中提取纯文本。"""
         if hasattr(node, "children") and isinstance(node.children,list):
             return "".join( self._extract_raw_text(child)for child in node.children)
         if hasattr(node, "children") and isinstance(node.children,str):
             return node.children
         return ""
+    """根据不同的类型的数据进行具体的切割"""
     def _node_to_block(self, node) -> Tuple[str, str]:
-        """根据不同的类型的数据进行具体的切割"""
         if isinstance(node, Paragraph):
             return "text", self._extract_raw_text(node).strip()
         if isinstance(node, FencedCode):
@@ -63,8 +65,8 @@ class AdvancedRAGSplitter:
         if isinstance(node, Table):
             return "table", self._table_to_markdown(node)
         return "text", ""
+    """将列表转换成 Markdown"""
     def _list_to_markdown(self,node: ListBlock ) -> str:
-        """将列表转换成 Markdown"""
         result = []
         for item in node.children:
             text = self._extract_raw_text( item ).strip()
@@ -72,12 +74,12 @@ class AdvancedRAGSplitter:
                 continue
             result.append(f"- {text}")
         return "\n".join(result)
+    """将表格的一行转换成 Markdown。"""
     def _row_to_md(self, row_node) -> str:
-        """将表格的一行转换成 Markdown。"""
         cells = [  self._extract_raw_text(cell) .strip() .replace("\n", " ") for cell in row_node.children  ]
         return "| " + " | ".join(cells) + " |"
+    """将表格转换成 Markdown"""
     def _table_to_markdown( self, node: Table ) -> str:
-        """将表格转换成 Markdown"""
         if not node.children:
             return ""
         header_row = node.children[0]
@@ -89,23 +91,14 @@ class AdvancedRAGSplitter:
         # 数据行
         rows = [ self._row_to_md(row) for row in data_rows ]
         return "\n".join( [header_md, separator_md] + rows  )
+    """更新标题层级"""
     def _update_header_stack( self, level: int, title: str ):
-        """更新标题层级"""
         self.header_stack[level] = title
         # 删除当前标题下面的所有低级标题
         self.header_stack = { k: v for k, v in self.header_stack.items() if k <= level }
+
+    """Block列表 ， 不断往当前Parent添加Block ， 接近1000 ， 再添加会超过1000 ， 创建新的Parent """
     def _create_parent_chunks( self, blocks: List[Tuple[str, str]], base_metadata: dict ) -> List[ParentChunk]:
-        """
-        Block列表
-           ↓
-        不断往当前Parent添加Block
-           ↓
-        接近1000
-           ↓
-        再添加会超过1000
-           ↓
-        创建新的Parent
-        """
         metadata = base_metadata.copy()
         # 添加当前标题层级
         metadata.update(self._get_current_metadata())
@@ -129,12 +122,10 @@ class AdvancedRAGSplitter:
         if current_blocks:
             parent_chunks.append(ParentChunk(blocks=current_blocks,metadata=metadata.copy()))
         return parent_chunks
+
+    """将当前标题下面的所有内容创建成 Parent。文本、代码、列表、表格按照Markdown 原来的顺序进行拼接。 """
     def _flush_current_content(self,current_content: List[Tuple[str, str]],base_metadata: dict):
-        """
-        将当前标题下面的所有内容创建成 Parent。
-        文本、代码、列表、表格按照
-        Markdown 原来的顺序进行拼接。
-        """
+
         if not current_content:
             return
         chunks = self._create_parent_chunks(blocks=current_content,base_metadata=base_metadata)
@@ -199,8 +190,8 @@ class AdvancedRAGSplitter:
                 for index,chunk in enumerate(chunks):
                     child_chunks.append( ChildChunk( text=chunk, parent_id=parent.parent_id, block_id=block_id, block_type=block_type, chunk_index=index, metadata=parent.metadata.copy() ) )
         return child_chunks
+    """切割代码块，并保证每个子块都有 Markdown 代码围栏"""
     def _split_code_block(self, code_block: str) -> List[str]:
-        """切割代码块，并保证每个子块都有 Markdown 代码围栏"""
         lines = code_block.splitlines()
         if len(lines) < 2:
             return [code_block]
@@ -223,15 +214,8 @@ class AdvancedRAGSplitter:
             # 每一个切片重新加上 Markdown 代码围栏
             result.append(f"```{language}\n{chunk}\n```")
         return result
+    """ 把大的md表格切割成多个小md表格 规则： 1. 保留表头 2. 保留分隔线 3. 按数据行切割  4. 每个子表格都是完整 Markdown 表格 """
     def _split_table(self,table_block:str)-> List[str]:
-        """
-        把大的md表格切割成多个小md表格
-        规则：
-                1. 保留表头
-                2. 保留分隔线
-                3. 按数据行切割
-                4. 每个子表格都是完整 Markdown 表格
-        """
         lines = [ line.strip() for line in table_block.splitlines() if line.strip() ]
         # 非标准表格，直接返回
         if len(lines) < 3:

@@ -7,8 +7,9 @@
 #      RRF
 #       ↓
 # Fused Results
+
+"""使用 RRF 融合 Vector Search 和 BM25 Search 的结果"""
 class RRFFuser:
-    """使用 RRF 融合 Vector Search 和 BM25 Search 的结果"""
     # RRF 常数，用于降低排名对最终得分的影响
     RRF_K = 60
     """Vector + BM25 → RRF"""

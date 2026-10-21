@@ -1,10 +1,11 @@
 import os
 import torch
 from sentence_transformers import CrossEncoder
+from config.settings import RERANKER_BATCH_SIZE, RERANKER_MAX_LENGTH, RERANKER_MODEL_PATH
 
 # 重排序器
 class RerankerService:
-    def __init__(self, model_path: str,max_length: int = 512, batch_size: int = 4):
+    def __init__(self, model_path: str,max_length: int = RERANKER_MAX_LENGTH, batch_size: int = RERANKER_BATCH_SIZE):
         self.model_path = model_path
         self.max_length = max_length
         self.batch_size = batch_size
@@ -12,18 +13,10 @@ class RerankerService:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"加载 Reranker: {model_path}")
         self.model = CrossEncoder( model_path,max_length=max_length,device=self.device)
+
+    """ Query + Documents ->  Cross Encoder -> Reranker Score ->  排序 -> Top-K """
     def rerank(self,query: str,documents: list[str], top_k: int):
-        """
-        Query + Documents
-            ↓
-        Cross Encoder
-            ↓
-        Reranker Score
-            ↓
-        排序
-            ↓
-        Top-K
-        """
+
         if not documents:
             return []
         # Query 和每个 Parent 组成一对
@@ -36,6 +29,6 @@ class RerankerService:
         return results[:top_k]
 
 # 你的本地模型路径
-MODEL_PATH = os.getenv( "RERANKER_MODEL_PATH","models/bge-reranker-base")
+MODEL_PATH = RERANKER_MODEL_PATH
 
-reranker_service = RerankerService(model_path=MODEL_PATH,max_length=512,batch_size=4)
+reranker_service = RerankerService(model_path=MODEL_PATH,max_length=RERANKER_MAX_LENGTH,batch_size=RERANKER_BATCH_SIZE)

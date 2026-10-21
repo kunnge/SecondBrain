@@ -1,13 +1,14 @@
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
+from config.settings import DATABASE_URL, DB_MAX_OVERFLOW, DB_POOL_SIZE
 
 Base = declarative_base()
 
 # 作用：专门负责 PostgreSQL 连接
 class DatabaseManager:
     # 创建 Base 基类
-    def __init__(self,database_url:str,pool_size:int = 10,max_overflow:int =20):
+    def __init__(self,database_url:str,pool_size:int = DB_POOL_SIZE,max_overflow:int = DB_MAX_OVERFLOW):
         """初始化数据库连接"""
         self.database_url = database_url
         # 创建 Engine
@@ -24,13 +25,17 @@ class DatabaseManager:
     def init_db(self):
         """初始化数据库"""
         # 关键：先导入所有模型，让 SQLAlchemy 注册表
+        import db.models
         # 开启 pgvector
         with self.engine.connect() as conn:
             conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
             conn.commit()
         # 创建所有表
+        # print("初始化前注册的表：", list(Base.metadata.tables.keys()))
         Base.metadata.create_all(bind=self.engine)
+        # print("初始化后数据库中的表：", self.engine.dialect.get_table_names(self.engine.connect()))
         print("数据库初始化完成")
+
 # 连接数据库并初始化
-db_manager=DatabaseManager("postgresql+psycopg2://postgres:postgres@localhost:5432/knowledge_base")
+db_manager = DatabaseManager(DATABASE_URL)
 db_manager.init_db()

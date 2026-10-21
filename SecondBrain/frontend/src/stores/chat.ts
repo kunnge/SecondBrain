@@ -1,144 +1,358 @@
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { fetchChatStream, type ChatMessage } from '@/api/chat'
+import {
+  createConversation as createConversationRequest,
+  deleteConversation as deleteConversationRequest,
+  editQuestionStream,
+  fetchChatStream,
+  getConversationMessages,
+  listConversations,
+  regenerateAnswerStream,
+  renameConversation as renameConversationRequest,
+  type ChatMessage,
+  type ConversationSummary,
+  type StreamEvent,
+} from '@/api/chat'
 
-/**
- * 来源引用结构
- */
-export interface Source {
-  id: string
-  content: string
-  filename?: string
-  node_type?: string
-}
+const ACTIVE_CONVERSATION_KEY = 'second-brain-active-conversation'
 
-/**
- * 聊天消息结构
- */
-export interface Message extends ChatMessage {
-  id: string
-  sources?: Source[] // 增加 sources 字段，用于展示参考来源
-}
-
-/**
- * 聊天状态管理
- */
 export const useChatStore = defineStore('chat', () => {
-  const messages = ref<Message[]>([])
+  const messages = ref<ChatMessage[]>([])
+  const conversations = ref<ConversationSummary[]>([])
+  const activeConversationId = ref<string | null>(null)
+  const activeConversation = computed(
+    () => conversations.value.find((item) => item.id === activeConversationId.value) ?? null,
+  )
   const isSending = ref(false)
-
-  // 如果你有文档切换功能，可以在这里维护当前选中的文档ID
+  const isLoading = ref(false)
+  const errorMessage = ref('')
   const currentDocumentId = ref<string | undefined>(undefined)
+  let activeController: AbortController | null = null
+  let activeStreamPromise: Promise<void> | null = null
 
-  /**
-   * 发送聊天消息
-   */
-  async function sendMessage(content: string) {
-    if (!content.trim() || isSending.value) {
-      return
+  const createId = () => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID()
     }
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  }
 
-    // 1. 添加用户消息
-    messages.value.push({
-      id: crypto.randomUUID(),
-      role: 'user',
-      content,
-    })
-
-    // 2. 创建AI消息占位
-    const assistantMessage: Message = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content: '',
-      sources: [], // 初始化为空数组
-    }
-    messages.value.push(assistantMessage)
-
-    isSending.value = true
-
-    try {
-      // 3. 提取历史记录 (排除刚才创建的空AI消息和最新的用户提问)
-      const history = messages.value.slice(0, -2).map((item) => ({
-        role: item.role,
-        content: item.content,
-      }))
-
-      // 4. 调用后端流式接口
-      // ⚠️ 注意：你需要将 api/chat.ts 中的 fetchChatStream 入参改为接收如下对象
-      const stream = fetchChatStream({
-        query: content,
-        document_id: currentDocumentId.value,
-        history: history,
-        top_k: 3,
-      } as any) // 暂时用 any 绕过旧类型，建议同步修改 api 定义
-
-      // 5. 缓冲区：用于处理 TCP 传输中可能被截断的数据包
-      let buffer = ''
-
-      for await (const chunk of stream) {
-        /*
-         * 【流式数据解析逻辑】
-         * 因为我们需要同时接收文字和 sources，后端通常会按行返回 JSON 字符串，例如：
-         * {"answer": "你"}
-         * {"answer": "好"}
-         * {"sources": [{"id":"1", "content":"..."}]}
-         */
-        buffer += chunk
-        // 按照换行符拆分，确保每次解析的都是完整的 JSON 字符串
-        const lines = buffer.split('\n')
-        // 把最后可能不完整的一行（半截数据）留到下一次 chunk 到来时拼接
-        buffer = lines.pop() || ''
-
-        for (const line of lines) {
-          if (!line.trim()) continue
-
-          try {
-            // 尝试解析后端传来的 JSON 块
-            const data = JSON.parse(line)
-
-            // 如果存在增量回答内容，累加到气泡中
-            if (data.answer) {
-              assistantMessage.content += data.answer
-            }
-
-            // 如果传来了参考来源（通常在最后一次请求中返回），赋值给 sources
-            if (data.sources) {
-              assistantMessage.sources = data.sources
-            }
-          } catch (e) {
-            // 兼容处理：如果你的后端还没有改成 JSON 流，而是纯文本流，就直接拼接
-            assistantMessage.content += line
-          }
-        }
-      }
-
-      // 处理结束后可能残留在 buffer 中的最后一点文本
-      if (buffer.trim()) {
-        try {
-          const data = JSON.parse(buffer)
-          if (data.answer) assistantMessage.content += data.answer
-          if (data.sources) assistantMessage.sources = data.sources
-        } catch (e) {
-          assistantMessage.content += buffer
-        }
-      }
-    } catch (error) {
-      console.error('发送失败:', error)
-      assistantMessage.content += '\n\n**[发送失败，请稍后重试]**'
-    } finally {
-      isSending.value = false
+  function rememberActiveConversation(id: string | null) {
+    activeConversationId.value = id
+    if (typeof localStorage !== 'undefined') {
+      if (id) localStorage.setItem(ACTIVE_CONVERSATION_KEY, id)
+      else localStorage.removeItem(ACTIVE_CONVERSATION_KEY)
     }
   }
 
-  function clearMessages() {
+  function applyConversation(conversation: ConversationSummary) {
+    const index = conversations.value.findIndex((item) => item.id === conversation.id)
+    if (index >= 0) conversations.value[index] = conversation
+    else conversations.value.unshift(conversation)
+    conversations.value.sort((a, b) => {
+      const aTime = a.updated_at ? Date.parse(a.updated_at) : 0
+      const bTime = b.updated_at ? Date.parse(b.updated_at) : 0
+      return bTime - aTime
+    })
+  }
+
+  async function refreshConversations() {
+    conversations.value = await listConversations()
+  }
+
+  async function initialize() {
+    isLoading.value = true
+    errorMessage.value = ''
+    try {
+      await refreshConversations()
+      const savedId = typeof localStorage !== 'undefined'
+        ? localStorage.getItem(ACTIVE_CONVERSATION_KEY)
+        : null
+      const initial = conversations.value.find((item) => item.id === savedId)
+        ?? conversations.value[0]
+      rememberActiveConversation(initial?.id ?? null)
+      if (initial) {
+        messages.value = await getConversationMessages(initial.id)
+      } else {
+        messages.value = []
+      }
+    } catch (error) {
+      errorMessage.value = error instanceof Error ? error.message : '无法加载会话'
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function stopGeneration() {
+    activeController?.abort()
+    if (activeStreamPromise) {
+      await activeStreamPromise.catch(() => undefined)
+    }
+  }
+
+  async function startNewConversation() {
+    await stopGeneration()
+    const conversation = await createConversationRequest()
+    applyConversation(conversation)
+    rememberActiveConversation(conversation.id)
     messages.value = []
+    errorMessage.value = ''
+    return conversation
+  }
+
+  async function selectConversation(conversationId: string) {
+    if (conversationId === activeConversationId.value) return
+    await stopGeneration()
+    rememberActiveConversation(conversationId)
+    messages.value = []
+    isLoading.value = true
+    errorMessage.value = ''
+    try {
+      messages.value = await getConversationMessages(conversationId)
+    } catch (error) {
+      messages.value = []
+      errorMessage.value = error instanceof Error ? error.message : '无法加载会话消息'
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function renameConversation(conversationId: string, title: string) {
+    const updated = await renameConversationRequest(conversationId, title.trim())
+    applyConversation(updated)
+  }
+
+  async function removeConversation(conversationId: string) {
+    if (conversationId === activeConversationId.value) await stopGeneration()
+    await deleteConversationRequest(conversationId)
+    conversations.value = conversations.value.filter((item) => item.id !== conversationId)
+    if (conversationId === activeConversationId.value) {
+      const next = conversations.value[0]
+      rememberActiveConversation(next?.id ?? null)
+      messages.value = next ? await getConversationMessages(next.id) : []
+    }
+  }
+
+  function parseEventBlock(block: string): StreamEvent | null {
+    const data = block
+      .split('\n')
+      .filter((line) => line.startsWith('data:'))
+      .map((line) => line.slice(5).trimStart())
+      .join('\n')
+    if (!data) return null
+    try {
+      return JSON.parse(data) as StreamEvent
+    } catch {
+      return null
+    }
+  }
+
+  function handleStreamEvent(
+    event: StreamEvent,
+    conversationId: string,
+    userMessage: ChatMessage,
+    assistantMessage: ChatMessage,
+  ) {
+    if (event.type === 'start') {
+      if (event.user_message) Object.assign(userMessage, event.user_message)
+      if (event.assistant_message) Object.assign(assistantMessage, event.assistant_message)
+      if (event.conversation) applyConversation(event.conversation)
+      return
+    }
+    if (event.type === 'delta' && event.content) {
+      assistantMessage.content += event.content
+      assistantMessage.status = 'streaming'
+      return
+    }
+    if (event.type === 'sources') {
+      assistantMessage.sources = event.sources ?? []
+      return
+    }
+    if (event.type === 'done') {
+      assistantMessage.status = 'completed'
+      assistantMessage.sources = event.sources ?? []
+      assistantMessage.error_message = null
+      return
+    }
+    if (event.type === 'error') {
+      assistantMessage.status = 'failed'
+      assistantMessage.error_message = event.message ?? '回答生成失败，请重试。'
+    }
+    if (conversationId === activeConversationId.value && event.type === 'error') {
+      errorMessage.value = ''
+    }
+  }
+
+  async function consumeStream(
+    conversationId: string,
+    userMessage: ChatMessage,
+    assistantMessage: ChatMessage,
+    streamFactory: (signal: AbortSignal) => AsyncGenerator<string>,
+  ) {
+    if (isSending.value) return
+    const controller = new AbortController()
+    activeController = controller
+    isSending.value = true
+    let buffer = ''
+    let terminalEventReceived = false
+    const run = (async () => {
+      try {
+        const stream = streamFactory(controller.signal)
+        for await (const chunk of stream) {
+          buffer += chunk.replace(/\r\n/g, '\n')
+          let boundary = buffer.indexOf('\n\n')
+          while (boundary >= 0) {
+            const event = parseEventBlock(buffer.slice(0, boundary))
+            buffer = buffer.slice(boundary + 2)
+            if (event) {
+              handleStreamEvent(event, conversationId, userMessage, assistantMessage)
+              if (event.type === 'done' || event.type === 'error') terminalEventReceived = true
+            }
+            boundary = buffer.indexOf('\n\n')
+          }
+        }
+        if (buffer.trim()) {
+          const event = parseEventBlock(buffer)
+          if (event) {
+            handleStreamEvent(event, conversationId, userMessage, assistantMessage)
+            if (event.type === 'done' || event.type === 'error') terminalEventReceived = true
+          }
+        }
+        if (!terminalEventReceived && !controller.signal.aborted) {
+          assistantMessage.status = 'interrupted'
+          assistantMessage.error_message = '连接中断，可以重新生成回答。'
+        }
+      } catch (error) {
+        if (controller.signal.aborted) {
+          assistantMessage.status = 'stopped'
+          assistantMessage.error_message = null
+        } else {
+          assistantMessage.status = 'failed'
+          assistantMessage.error_message = error instanceof Error
+            ? error.message
+            : '回答生成失败，请重试。'
+        }
+      } finally {
+        if (controller.signal.aborted && !terminalEventReceived) {
+          assistantMessage.status = 'stopped'
+          assistantMessage.error_message = null
+        }
+        isSending.value = false
+        if (activeController === controller) activeController = null
+        activeStreamPromise = null
+        try {
+          await refreshConversations()
+        } catch {
+          // Keep the streamed answer visible even if refreshing the sidebar fails.
+        }
+      }
+    })()
+    activeStreamPromise = run
+    await run
+  }
+
+  async function sendMessage(content: string) {
+    const query = content.trim()
+    if (!query || isSending.value) return
+    let conversationId = activeConversationId.value
+    if (!conversationId) {
+      const conversation = await startNewConversation()
+      conversationId = conversation.id
+    }
+    errorMessage.value = ''
+    const userMessage: ChatMessage = {
+      id: createId(), role: 'user', content: query, status: 'completed',
+    }
+    const assistantMessage: ChatMessage = {
+      id: createId(), role: 'assistant', content: '', sources: [], status: 'streaming',
+    }
+    messages.value.push(userMessage, assistantMessage)
+    await consumeStream(
+      conversationId,
+      userMessage,
+      assistantMessage,
+      (signal) => fetchChatStream(
+        conversationId as string,
+        query,
+        signal,
+        currentDocumentId.value,
+      ),
+    )
+  }
+
+  async function editMessage(messageId: string, content: string) {
+    const query = content.trim()
+    const conversationId = activeConversationId.value
+    const index = messages.value.findIndex((item) => item.id === messageId)
+    if (!query || !conversationId || index < 0 || isSending.value) return
+    const userMessage = messages.value[index]
+    if (userMessage.role !== 'user') return
+    userMessage.content = query
+    userMessage.status = 'completed'
+    messages.value.splice(index + 1)
+    const assistantMessage: ChatMessage = {
+      id: createId(), role: 'assistant', content: '', sources: [], status: 'streaming',
+    }
+    messages.value.push(assistantMessage)
+    await consumeStream(
+      conversationId,
+      userMessage,
+      assistantMessage,
+      (signal) => editQuestionStream(
+        conversationId,
+        messageId,
+        query,
+        signal,
+        currentDocumentId.value,
+      ),
+    )
+  }
+
+  async function regenerateMessage(messageId: string) {
+    const conversationId = activeConversationId.value
+    const index = messages.value.findIndex((item) => item.id === messageId)
+    if (!conversationId || index < 0 || isSending.value) return
+    const assistantMessage = messages.value[index]
+    if (assistantMessage.role !== 'assistant') return
+    const userMessage = [...messages.value.slice(0, index)]
+      .reverse()
+      .find((item) => item.role === 'user')
+    if (!userMessage) return
+    messages.value.splice(index + 1)
+    assistantMessage.content = ''
+    assistantMessage.sources = []
+    assistantMessage.status = 'streaming'
+    assistantMessage.error_message = null
+    await consumeStream(
+      conversationId,
+      userMessage,
+      assistantMessage,
+      (signal) => regenerateAnswerStream(
+        conversationId,
+        messageId,
+        signal,
+        currentDocumentId.value,
+      ),
+    )
   }
 
   return {
     messages,
+    conversations,
+    activeConversationId,
+    activeConversation,
     isSending,
+    isLoading,
+    errorMessage,
     currentDocumentId,
+    initialize,
+    startNewConversation,
+    selectConversation,
+    renameConversation,
+    removeConversation,
     sendMessage,
-    clearMessages,
+    editMessage,
+    regenerateMessage,
+    stopGeneration,
   }
 })

@@ -1,33 +1,58 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { onErrorCaptured, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { MessageSquare, Database } from 'lucide-vue-next'
 
 const route = useRoute()
+const router = useRouter()
+const routeError = ref('')
+
+router.onError((error) => {
+  console.error('路由加载失败:', error)
+  routeError.value = error instanceof Error ? error.message : '页面组件加载失败'
+})
+
+router.afterEach((_to, _from, failure) => {
+  if (!failure) routeError.value = ''
+})
+
+onErrorCaptured((error) => {
+  console.error('页面渲染失败:', error)
+  routeError.value = error instanceof Error ? error.message : '页面暂时无法显示'
+  return false
+})
+
+function retryRoute() {
+  window.location.reload()
+}
 </script>
 
 <template>
-  <div class="flex h-screen w-full bg-zinc-50 text-zinc-900 overflow-hidden font-sans">
+  <div class="app-shell flex h-screen w-full overflow-hidden font-sans text-zinc-900">
     <!-- 左侧菜单栏 -->
     <aside
-      class="w-64 flex-shrink-0 bg-white border-r border-zinc-200 flex flex-col h-full transition-all"
+      class="app-sidebar flex w-64 flex-shrink-0 flex-col border-r border-zinc-200/80 bg-white transition-all"
     >
-      <div class="p-6 flex items-center gap-3">
+      <div class="border-b border-zinc-100 px-6 py-6">
+        <div class="flex items-center gap-3">
         <div
-          class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-600/20"
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-600 shadow-lg shadow-purple-600/20"
         >
           <Database class="w-5 h-5 text-white" />
         </div>
         <h1
-          class="font-bold tracking-tight text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-400"
+          class="text-xl font-bold tracking-tight text-purple-600"
         >
           Second Brain
         </h1>
+        </div>
+        <p class="mt-3 pl-12 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Personal knowledge OS</p>
       </div>
 
-      <nav class="flex-1 px-4 py-4 space-y-2">
+      <nav class="flex-1 space-y-1 px-3 py-5">
         <router-link
           to="/chat"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 group"
           :class="[
             route.path === '/chat'
               ? 'bg-purple-50 text-purple-700 shadow-sm ring-1 ring-purple-100'
@@ -43,7 +68,7 @@ const route = useRoute()
 
         <router-link
           to="/knowledge"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group"
+          class="flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 group"
           :class="[
             route.path === '/knowledge'
               ? 'bg-purple-50 text-purple-700 shadow-sm ring-1 ring-purple-100'
@@ -58,9 +83,9 @@ const route = useRoute()
         </router-link>
       </nav>
 
-      <div class="p-4 mt-auto">
-        <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-100 text-xs text-zinc-500">
-          <p class="font-medium text-purple-700 mb-1">系统状态</p>
+      <div class="mt-auto p-4">
+        <div class="rounded-xl border border-purple-100 bg-purple-50/60 p-4 text-xs text-zinc-500">
+          <div class="mb-2 flex items-center justify-between"><p class="font-medium text-purple-700">系统状态</p><span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-purple-600">ONLINE</span></div>
           <p class="flex items-center gap-2">
             <span
               class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]"
@@ -72,30 +97,36 @@ const route = useRoute()
     </aside>
 
     <!-- 右侧主区域 -->
-    <main class="flex-1 flex flex-col h-full min-w-0 bg-zinc-50 relative">
+    <main class="relative flex h-full min-w-0 flex-1 flex-col bg-[#f8f7fc]">
       <div
-        class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] pointer-events-none mix-blend-overlay"
+        class="pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-50/30 via-transparent to-violet-50/20"
       ></div>
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
+      <router-view v-slot="{ Component, route: viewRoute }">
+        <section
+          v-if="routeError"
+          class="relative z-10 m-auto w-full max-w-lg rounded-2xl border border-amber-200 bg-white p-7 text-center shadow-lg shadow-purple-950/5"
+          role="alert"
+        >
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-700">!</div>
+          <h2 class="mt-4 text-lg font-semibold text-zinc-900">页面暂时无法显示</h2>
+          <p class="mt-2 break-words text-sm leading-6 text-zinc-500">{{ routeError }}</p>
+          <button
+            class="mt-5 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-500"
+            @click="retryRoute"
+          >
+            重新加载页面
+          </button>
+        </section>
+        <component v-else-if="Component" :is="Component" :key="viewRoute.fullPath" />
+        <div v-else class="relative z-10 m-auto text-sm text-zinc-500" role="status">
+          页面正在加载…
+        </div>
       </router-view>
     </main>
   </div>
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(4px);
-}
+.app-shell{background:#f8f7fc}
+.app-sidebar{box-shadow:4px 0 18px rgb(39 16 76/.025)}
 </style>
