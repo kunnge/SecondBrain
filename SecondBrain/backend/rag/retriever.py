@@ -20,9 +20,26 @@ class RAGRetriever:
         # 将各个检索组件组合成完整的混合检索流程
         self.hybrid = HybridRetriever(  engine=engine,  vector_search=self.vector_search, bm25_search=self.bm25_search,  rrf_fuser=self.rrf_fuser,  reranker=self.reranker  )
     """执行完整的 RAG 混合检索"""
-    def search(self, query: str, vector: list[float], child_top_k: int = RETRIEVAL_CHILD_TOP_K,parent_top_k: int = RETRIEVAL_PARENT_TOP_K, document_id: str | None = None,evaluation: bool =False):
+    def search(
+        self,
+        query: str,
+        vector: list[float],
+        child_top_k: int = RETRIEVAL_CHILD_TOP_K,
+        parent_top_k: int = RETRIEVAL_PARENT_TOP_K,
+        document_id: str | None = None,
+        evaluation: bool = False,
+        **search_overrides,
+    ):
         # 调用 HybridRetriever 执行 Vector + BM25 + RRF + Parent 去重 + Reranker
-        return self.hybrid.search( query=query, vector=vector, child_top_k=child_top_k, parent_top_k=parent_top_k, document_id=document_id,evaluation=evaluation)
+        return self.hybrid.search(
+            query=query,
+            vector=vector,
+            child_top_k=child_top_k,
+            parent_top_k=parent_top_k,
+            document_id=document_id,
+            evaluation=evaluation,
+            **search_overrides,
+        )
     """重新加载数据库中的 Child Chunk 并刷新 BM25 索引"""
     def refresh_bm25_index(self):
         # 重新建立 BM25 索引，使新增或更新的 Chunk 可以参与检索

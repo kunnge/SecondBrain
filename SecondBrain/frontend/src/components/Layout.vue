@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { onErrorCaptured, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { MessageSquare, Database } from 'lucide-vue-next'
+import { MessageSquare, Database, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
 const routeError = ref('')
+const sidebarCollapsed = ref(localStorage.getItem('layoutSidebarCollapsed') === 'true')
+
+function toggleSidebar() {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+  localStorage.setItem('layoutSidebarCollapsed', String(sidebarCollapsed.value))
+}
 
 router.onError((error) => {
   console.error('路由加载失败:', error)
@@ -31,22 +37,35 @@ function retryRoute() {
   <div class="app-shell flex h-screen w-full overflow-hidden font-sans text-zinc-900">
     <!-- 左侧菜单栏 -->
     <aside
-      class="app-sidebar flex w-64 flex-shrink-0 flex-col border-r border-zinc-200/80 bg-white transition-all"
+      class="app-sidebar flex flex-shrink-0 flex-col border-r border-zinc-200/80 bg-white transition-[width] duration-200"
+      :class="sidebarCollapsed ? 'w-16' : 'w-64'"
     >
-      <div class="border-b border-zinc-100 px-6 py-6">
-        <div class="flex items-center gap-3">
+      <div class="border-b border-zinc-100" :class="sidebarCollapsed ? 'flex justify-center p-3' : 'px-6 py-6'">
+        <div class="flex items-center gap-3" :class="sidebarCollapsed ? 'justify-center' : ''">
         <div
           class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-600 shadow-lg shadow-purple-600/20"
         >
           <Database class="w-5 h-5 text-white" />
         </div>
-        <h1
+        <h1 v-if="!sidebarCollapsed"
           class="text-xl font-bold tracking-tight text-purple-600"
         >
           Second Brain
         </h1>
         </div>
-        <p class="mt-3 pl-12 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Personal knowledge OS</p>
+        <p v-if="!sidebarCollapsed" class="mt-3 pl-12 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Personal knowledge OS</p>
+      </div>
+
+      <div class="flex justify-end px-3 pt-3">
+        <button
+          class="rounded-lg p-2 text-zinc-400 transition hover:bg-purple-50 hover:text-purple-600"
+          :title="sidebarCollapsed ? '展开侧边栏' : '收缩侧边栏'"
+          :aria-label="sidebarCollapsed ? '展开侧边栏' : '收缩侧边栏'"
+          @click="toggleSidebar"
+        >
+          <PanelLeftOpen v-if="sidebarCollapsed" class="h-5 w-5" />
+          <PanelLeftClose v-else class="h-5 w-5" />
+        </button>
       </div>
 
       <nav class="flex-1 space-y-1 px-3 py-5">
@@ -63,7 +82,7 @@ function retryRoute() {
             class="w-5 h-5 transition-transform group-hover:scale-110"
             :class="route.path === '/chat' ? 'text-purple-600' : ''"
           />
-          <span class="font-medium text-sm">对话工作台</span>
+          <span v-if="!sidebarCollapsed" class="font-medium text-sm">对话工作台</span>
         </router-link>
 
         <router-link
@@ -79,21 +98,10 @@ function retryRoute() {
             class="w-5 h-5 transition-transform group-hover:scale-110"
             :class="route.path === '/knowledge' ? 'text-purple-600' : ''"
           />
-          <span class="font-medium text-sm">知识库管理</span>
+          <span v-if="!sidebarCollapsed" class="font-medium text-sm">知识库管理</span>
         </router-link>
       </nav>
 
-      <div class="mt-auto p-4">
-        <div class="rounded-xl border border-purple-100 bg-purple-50/60 p-4 text-xs text-zinc-500">
-          <div class="mb-2 flex items-center justify-between"><p class="font-medium text-purple-700">系统状态</p><span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-purple-600">ONLINE</span></div>
-          <p class="flex items-center gap-2">
-            <span
-              class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.4)]"
-            ></span>
-            引擎运行中
-          </p>
-        </div>
-      </div>
     </aside>
 
     <!-- 右侧主区域 -->

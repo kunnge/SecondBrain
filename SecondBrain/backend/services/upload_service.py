@@ -15,7 +15,8 @@ EVALUATION_DIR = Path("evaluation/evaluation_chunks")
 EVALUATION_DIR.mkdir(parents=True, exist_ok=True)
 
 class UploadService:
-    # 读取上传的 Markdown 文件并转换为 LangChain 文档对象。
+
+    """读取上传的 Markdown 文件并转换为 LangChain 文档对象"""
     def parse_markdown(self, file: UploadFile) -> List[LangchainDocument]:
         # 检查文件名和扩展名，拒绝非 Markdown 文件。
         if not file.filename or not file.filename.lower().endswith(".md"):
@@ -52,7 +53,7 @@ class UploadService:
     def get_headers(metadata: dict) -> dict:
         return {key: value for key, value in metadata.items() if isinstance(key, str) and key.startswith("H") and key[1:].isdigit()}
 
-    # 将 Parent、Child 切片及其关联关系导出为 RAG 评测 JSON。
+    """将 Parent、Child 切片及其关联关系导出为 RAG 评测 JSON"""
     def save_evaluation_chunks(self, document: Document, parent_chunks, child_chunks, parent_id_map: dict, filename: str):
         # 根据数据库 Parent ID 对 Child 切片进行分组。
         children_map = {}
@@ -104,8 +105,8 @@ class UploadService:
         print(f"✅ RAG评测数据已生成: {output_path}")
         return output_path
 
-    # 将文档、Parent、Child 和向量保存到 PostgreSQL，可选导出评测数据。
-    def save_document(self, file, documents, parent_chunks, child_chunks, db: Session,ai_metadata: dict = None, export_evaluation: bool = False,metadata_status: str = "completed", metadata_error: str = None,existing_document: Document = None,):
+    """将文档、Parent、Child 和向量保存到 PostgreSQL，可选导出评测数据"""
+    def save_document(self, file, documents, parent_chunks, child_chunks, db: Session,ai_metadata: dict = None, export_evaluation: bool = False,metadata_status: str = "completed", metadata_error: str = None,existing_document: Document = None, replace_existing: bool = False, refresh_index: bool = True, commit: bool = True):
         try:
             # 获取文件名、合并正文，并准备 AI 元数据。
             filename = getattr(file, "filename", "untitled.md")
@@ -126,6 +127,15 @@ class UploadService:
             # 先写入文档并 flush，确保后续切片可以关联文档 ID。
             db.add(new_doc)
             db.flush()
+            if replace_existing and existing_document is not None:
+                db.query(DocumentChunk).filter(
+                    DocumentChunk.document_id == new_doc.id,
+                    DocumentChunk.parent_id.is_not(None),
+                ).delete(synchronize_session=False)
+                db.query(DocumentChunk).filter(
+                    DocumentChunk.document_id == new_doc.id,
+                    DocumentChunk.parent_id.is_(None),
+                ).delete(synchronize_session=False)
             # 创建 Parent 数据库记录，Parent 本身不保存向量。
             parent_orm_chunks = [
                 DocumentChunk(
@@ -158,12 +168,14 @@ class UploadService:
             # 批量添加 Child，更新处理状态并提交数据库事务。
             db.add_all(child_orm_chunks)
             new_doc.processing_status = "completed"
-            db.commit()
+            if commit:
+                db.commit()
             # 刷新 BM25 索引，使新文档可以参与关键词检索。
-            try:
-                retriever.refresh_bm25_index()
-            except Exception as exc:
-                print(f"BM25 索引刷新失败，将在后续刷新时重试: {exc}")
+            if refresh_index and commit:
+                try:
+                    retriever.refresh_bm25_index()
+                except Exception as exc:
+                    print(f"BM25 索引刷新失败，将在后续刷新时重试: {exc}")
             # 按需导出评测 JSON，导出失败不影响已完成的文档入库。
             evaluation_path = None
             if export_evaluation:
@@ -176,14 +188,15 @@ class UploadService:
                 except Exception as exc:
                     print(f"评测数据导出失败，不影响文档入库: {exc}")
             # 刷新文档对象并返回文档记录和评测文件路径。
-            db.refresh(new_doc)
+            if commit:
+                db.refresh(new_doc)
             return new_doc, evaluation_path
         except Exception:
             # 数据库操作发生异常时回滚当前事务，并向上层抛出异常。
             db.rollback()
             raise
 
-    # 上传处理失败时，将文档状态更新为 failed 并记录错误信息。
+    """上传处理失败时，将文档状态更新为 failed 并记录错误信息"""
     def _mark_upload_failed(self, db: Session, document_id: str | None, reason: str) -> None:
         # 没有文档 ID 时无法更新数据库，直接返回。
         if not document_id:
@@ -209,7 +222,7 @@ class UploadService:
             db.rollback()
             print(f"无法更新文档失败状态: {exc}")
 
-    # 上传 Markdown，生成元数据、切片和向量，并完成数据库入库。
+    """上传 Markdown，生成元数据、切片和向量，并完成数据库入库"""
     def upload_markdown(self, file, db: Session, export_evaluation: bool = False):
         document = None
         try:
@@ -302,6 +315,37 @@ class UploadService:
                 status_code=500,
                 detail="文档处理失败，文档状态已保留，请检查错误信息后重试",
             ) from exc
+    """通过标准的元数据提取、文本分块和向量化流程处理 Vault 中的 Markdown 文件"""
+    def process_markdown_content(self, markdown_text: str, filename: str, db: Session,existing_document: Document | None = None,refresh_index: bool = True) -> Document:
+        if not markdown_text.strip():
+            raise ValueError("Markdown 文档内容不能为空")
+        documents = [LangchainDocument(page_content=markdown_text, metadata={"filename": filename})]
+        fallback = {"title": Path(filename).stem or "未命名文档",
+                    "summary": markdown_text.strip()[:240], "category": "未分类",
+                    "tags": [], "keywords": []}
+        metadata_status, metadata_error = "completed", None
+        try:
+            ai_metadata = MetadataService().generate_metadata(markdown_text)
+        except Exception as exc:
+            ai_metadata, metadata_status = fallback, "failed"
+            metadata_error = f"AI 元数据生成失败：{str(exc)[:800]}"
+        parent_chunks, child_chunks = AdvancedRAGSplitter().process_documents(documents)
+        texts = [f"章节路径：\n{self.get_heading_path(chunk.metadata or {})}\n\n正文：\n{chunk.text}"
+                 for chunk in child_chunks]
+        vectors = embedding_service.embed_documents(texts)
+        if len(vectors) != len(child_chunks):
+            raise ValueError("向量服务返回的结果数量与文档切片数量不一致")
+        for chunk, vector in zip(child_chunks, vectors):
+            chunk.embedding = vector
+        document, _ = self.save_document(
+            file=type("MarkdownSource", (), {"filename": filename})(),
+            documents=documents, parent_chunks=parent_chunks, child_chunks=child_chunks,
+            db=db, ai_metadata=ai_metadata, export_evaluation=False,
+            metadata_status=metadata_status, metadata_error=metadata_error,
+            existing_document=existing_document,
+            replace_existing=existing_document is not None, refresh_index=refresh_index, commit=False,
+        )
+        return document
 
 # 创建上传服务实例，供接口路由层调用。
 upload_service = UploadService()

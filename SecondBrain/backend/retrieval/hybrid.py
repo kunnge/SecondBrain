@@ -1,7 +1,7 @@
 from sqlalchemy import text
 
 from retrieval.context_expander import ContextExpander
-from config.settings import CONTEXT_MAX_CHUNKS_PER_PARENT, CONTEXT_MAX_TOTAL_CHUNKS, CONTEXT_NEIGHBOR_WINDOW, RERANK_MIN_PARENT_K, RETRIEVAL_CHILD_TOP_K, RETRIEVAL_PARENT_TOP_K
+from config.settings import CONTEXT_MAX_CHUNKS_PER_PARENT, CONTEXT_MAX_TOTAL_CHUNKS, CONTEXT_NEIGHBOR_WINDOW, RERANK_MIN_PARENT_K, RERANK_PARENT_MULTIPLIER, RETRIEVAL_CHILD_TOP_K, RETRIEVAL_PARENT_TOP_K
 
 
 #            Query
@@ -46,7 +46,37 @@ class HybridRetriever:
         # 上下文扩展器
         self.context_expander = ContextExpander(engine=engine, neighbor_window=CONTEXT_NEIGHBOR_WINDOW, max_chunks_per_parent=CONTEXT_MAX_CHUNKS_PER_PARENT, max_total_chunks=CONTEXT_MAX_TOTAL_CHUNKS)
     """执行完整混合检索流程"""
-    def search( self, query: str, vector: list[float], child_top_k: int = RETRIEVAL_CHILD_TOP_K, parent_top_k: int = RETRIEVAL_PARENT_TOP_K, document_id: str | None = None,evaluation: bool = False ):
+    def search(
+        self,
+        query: str,
+        vector: list[float],
+        child_top_k: int = RETRIEVAL_CHILD_TOP_K,
+        parent_top_k: int = RETRIEVAL_PARENT_TOP_K,
+        document_id: str | None = None,
+        evaluation: bool = False,
+        rrf_k: int | None = None,
+        reranker_candidates: int | None = None,
+        rerank_min_parent_k: int | None = None,
+        rerank_parent_multiplier: int | None = None,
+        context_neighbor_window: int | None = None,
+        context_max_chunks_per_parent: int | None = None,
+        context_max_total_chunks: int | None = None,
+    ):
+        effective_rrf_k = self.rrf_fuser.RRF_K if rrf_k is None else rrf_k
+        effective_rerank_min_parent_k = self.MIN_RERANK_PARENT_K if rerank_min_parent_k is None else rerank_min_parent_k
+        effective_rerank_parent_multiplier = RERANK_PARENT_MULTIPLIER if rerank_parent_multiplier is None else rerank_parent_multiplier
+        effective_context_neighbor_window = self.context_expander.neighbor_window if context_neighbor_window is None else context_neighbor_window
+        effective_context_max_chunks_per_parent = self.context_expander.max_chunks_per_parent if context_max_chunks_per_parent is None else context_max_chunks_per_parent
+        effective_context_max_total_chunks = self.context_expander.max_total_chunks if context_max_total_chunks is None else context_max_total_chunks
+        configured_reranker_candidates = max(
+            parent_top_k * effective_rerank_parent_multiplier,
+            effective_rerank_min_parent_k,
+        )
+        requested_reranker_candidates = (
+            configured_reranker_candidates if reranker_candidates is None else reranker_candidates
+        )
+        if reranker_candidates is not None and not parent_top_k <= reranker_candidates <= child_top_k:
+            raise ValueError("reranker_candidates must be between parent_top_k and child_top_k")
         # 1. 设置候选数量
         candidate_k = child_top_k
         # 2. Vector Search：根据向量相似度召回 Child
@@ -54,10 +84,15 @@ class HybridRetriever:
         # 3. BM25 Search：根据关键词匹配召回 Child
         bm25_results = self.bm25_search.search( query=query, document_id=document_id, limit=candidate_k )
         # 4. Vector + BM25 → RRF：融合两路检索结果
-        fused_children = self.rrf_fuser.fuse( vector_results=vector_results, bm25_results=bm25_results, limit=candidate_k )
+        fused_children = self.rrf_fuser.fuse(
+            vector_results=vector_results,
+            bm25_results=bm25_results,
+            limit=candidate_k,
+            rrf_k=effective_rrf_k,
+        )
         # 两路检索都没有得到有效结果时直接返回
         if not fused_children:
-            if evaluation: return {"vector_results": vector_results, "bm25_results": bm25_results, "rrf_results": [],"rerank_candidates": [],"results": []}
+            if evaluation: return {"vector_results": vector_results, "bm25_results": bm25_results, "rrf_results": [],"rerank_candidates": [],"reranker_candidates_requested": requested_reranker_candidates,"reranker_candidates_actual": 0,"results": []}
             return []
         # 5. Child → Parent 去重：每个 Parent 只保留 RRF 得分最高的 Child
         parent_best = {}
@@ -73,12 +108,12 @@ class HybridRetriever:
                 parent_best[parent_id] = item
         # 没有有效 Parent 时直接返回
         if not parent_best:
-            if evaluation: return {"vector_results": vector_results, "bm25_results": bm25_results,"rrf_results": fused_children, "rerank_candidates": [],"results": []}
+            if evaluation: return {"vector_results": vector_results, "bm25_results": bm25_results,"rrf_results": fused_children, "rerank_candidates": [],"reranker_candidates_requested": requested_reranker_candidates,"reranker_candidates_actual": 0,"results": []}
             return []
         # 6. 按 RRF 分数排序：获取 Parent 的初步排序
         sorted_parents = sorted( parent_best.items(), key=lambda item: item[1]["rrf_score"], reverse=True )
-        # 7. 给 Reranker 更多候选：至少 12 个，或者最终数量的 4 倍
-        rerank_parent_k = max( parent_top_k * 4, self.MIN_RERANK_PARENT_K )
+        # RRF is capped at child_top_k, so reranking can only use available unique parents.
+        rerank_parent_k = min(requested_reranker_candidates, len(sorted_parents))
         # 截取前面的 Parent 作为 Reranker 候选
         sorted_parents = sorted_parents[:rerank_parent_k]
         # 8. 查询 Parent 完整内容
@@ -117,6 +152,7 @@ class HybridRetriever:
                 "chunk_metadata": parent_metadata,
                 # 代表 Child ID
                 "representative_child_id": item.get("id"),
+                "representative_block_id": item.get("block_id"),
                 # 代表 Child 索引
                 "representative_chunk_index": item.get("chunk_index"),
                 # Vector 距离
@@ -139,14 +175,27 @@ class HybridRetriever:
         # 没有有效 Reranker 候选时直接返回
         if not rerank_results:
             if evaluation:
-                return {"vector_results": vector_results, "bm25_results": bm25_results,"rrf_results": fused_children, "rerank_candidates": [], "results": []}
+                return {"vector_results": vector_results, "bm25_results": bm25_results,"rrf_results": fused_children, "rerank_candidates": [], "reranker_candidates_requested": requested_reranker_candidates,"reranker_candidates_actual": 0, "results": []}
             return []
         # 10. Reranker：对 Parent 候选重新排序并返回最终 Top-K
         final_results = self.reranker.rerank( query=query, results=rerank_results, top_k=parent_top_k )
         # 11. 上下文扩展
-        context_chunks = self.context_expander.expand(final_results)
+        context_chunks = self.context_expander.expand(
+            final_results,
+            neighbor_window=effective_context_neighbor_window,
+            max_chunks_per_parent=effective_context_max_chunks_per_parent,
+            max_total_chunks=effective_context_max_total_chunks)
         # 测试模式返回所有阶段结果
         if evaluation:
-            return { "vector_results": vector_results, "bm25_results": bm25_results, "rrf_results": fused_children, "rerank_candidates": rerank_results,"context_chunks": context_chunks, "results": final_results }
+            return {
+                "vector_results": vector_results,
+                "bm25_results": bm25_results,
+                "rrf_results": fused_children,
+                "rerank_candidates": rerank_results,
+                "reranker_candidates_requested": requested_reranker_candidates,
+                "reranker_candidates_actual": len(rerank_results),
+                "context_chunks": context_chunks,
+                "results": final_results,
+            }
         # 正常模式只返回最终结果
         return { "results": final_results, "context_chunks": context_chunks }

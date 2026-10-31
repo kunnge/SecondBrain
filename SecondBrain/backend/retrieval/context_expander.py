@@ -14,7 +14,16 @@ class ContextExpander:
         # 所有 Parent 最多保留的 Chunk 数量
         self.max_total_chunks = max_total_chunks
     """根据 Reranker 命中的 Child 扩展前后上下文"""
-    def expand(self, results):
+    def expand(
+        self,
+        results,
+        neighbor_window: int | None = None,
+        max_chunks_per_parent: int | None = None,
+        max_total_chunks: int | None = None,
+    ):
+        effective_neighbor_window = self.neighbor_window if neighbor_window is None else neighbor_window
+        effective_max_chunks_per_parent = self.max_chunks_per_parent if max_chunks_per_parent is None else max_chunks_per_parent
+        effective_max_total_chunks = self.max_total_chunks if max_total_chunks is None else max_total_chunks
         # 获取 Reranker 命中的代表 Child
         child_ids = [
             result.get("representative_child_id")
@@ -25,14 +34,14 @@ class ContextExpander:
             return []
 
         # 查询命中 Child 所属的 Parent
-        parent_sql = text("""  SELECT id, parent_id  FROM document_chunks  WHERE id = ANY(:ids)  """)
+        parent_sql = text("""  SELECT id, parent_id, block_id  FROM document_chunks  WHERE id = ANY(:ids)  """)
         with self.engine.connect() as conn:
             child_rows = conn.execute( parent_sql,{"ids": child_ids}).mappings().all()
         if not child_rows:
             return []
         # 建立 Child → Parent 映射
         child_parent_map = {
-            str(row["id"]): row["parent_id"]
+            str(row["id"]): (row["parent_id"], row["block_id"])
             for row in child_rows
         }
         # 获取所有相关 Parent
@@ -44,10 +53,10 @@ class ContextExpander:
             return []
         # 一次查询所有相关 Parent 下的 Child
         children_sql = text("""
-            SELECT id, document_id, parent_id, text, chunk_metadata
+            SELECT id, document_id, parent_id, block_id, chunk_index, block_type, text, chunk_metadata
             FROM document_chunks
             WHERE parent_id = ANY(:parent_ids)
-            ORDER BY parent_id, (chunk_metadata->>'chunk_index')::int
+            ORDER BY parent_id, block_id NULLS FIRST, chunk_index NULLS FIRST
         """)
         with self.engine.connect() as conn:
             child_rows = conn.execute(children_sql,{"parent_ids": parent_ids}).mappings().all()
@@ -55,14 +64,16 @@ class ContextExpander:
         parent_children = {}
         for row in child_rows:
             parent_id = str(row["parent_id"])
-            parent_children.setdefault(parent_id, []).append(dict(row))
+            block_id = str(row["block_id"] or "")
+            parent_children.setdefault(parent_id, {}).setdefault(block_id, []).append(dict(row))
         # 获取每个命中 Child 的前后上下文
         chunks = []
         for parent_rank, child_id in enumerate(child_ids):
-            parent_id = child_parent_map.get(str(child_id))
-            if not parent_id:
+            child_location = child_parent_map.get(str(child_id))
+            if not child_location:
                 continue
-            children = parent_children.get(str(parent_id), [])
+            parent_id, block_id = child_location
+            children = parent_children.get(str(parent_id), {}).get(str(block_id or ""), [])
             # 找到命中的 Child 位置
             target_index = None
             for index, child in enumerate(children):
@@ -72,16 +83,16 @@ class ContextExpander:
             if target_index is None:
                 continue
             # 计算上下文范围
-            start = max(0, target_index - self.neighbor_window)
-            end = min(len(children),target_index + self.neighbor_window + 1)
+            start = max(0, target_index - effective_neighbor_window)
+            end = min(len(children),target_index + effective_neighbor_window + 1)
             # 获取当前 Parent 的扩展 Chunk
             parent_chunks = children[start:end]
             # 限制单个 Parent 的 Chunk 数量
-            parent_chunks = parent_chunks[:self.max_chunks_per_parent]
+            parent_chunks = parent_chunks[:effective_max_chunks_per_parent]
             # 添加上下文 Chunk
             for chunk in parent_chunks:
                 metadata = chunk.get("chunk_metadata") or {}
-                chunk_index = metadata.get("chunk_index")
+                chunk_index = chunk.get("chunk_index")
                 # 确保 Chunk Index 为整数
                 try:
                     chunk_index = int(chunk_index)
@@ -91,12 +102,12 @@ class ContextExpander:
                     "id": chunk["id"],
                     "document_id": chunk["document_id"],
                     "parent_id": chunk["parent_id"],
+                    "block_id": chunk["block_id"],
+                    "block_type": chunk["block_type"],
                     "text": chunk["text"] or "",
                     "chunk_metadata": metadata,
                     "chunk_index": chunk_index,
                     "heading_path": metadata.get("heading_path"),
-                    "block_id": metadata.get("block_id"),
-                    "block_type": metadata.get("block_type"),
                     # 保存 Reranker 中 Parent 的排名
                     "parent_rank": parent_rank
                 })
@@ -108,4 +119,4 @@ class ContextExpander:
         # 按 Reranker Parent 排名和 Chunk 顺序排序
         chunks.sort( key=lambda x: ( x.get("parent_rank", 999), x.get("chunk_index", 0) ) )
         # 限制所有 Parent 的总 Chunk 数量
-        return chunks[:self.max_total_chunks]
+        return chunks[:effective_max_total_chunks]

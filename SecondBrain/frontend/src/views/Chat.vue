@@ -120,7 +120,7 @@
       <section class="flex min-w-0 flex-1 flex-col">
         <main
           ref="scrollContainer"
-          class="min-h-0 flex-1 overflow-y-auto scroll-smooth px-4 py-6 md:px-6"
+          class="min-h-0 flex-1 overflow-x-hidden overflow-y-auto scroll-smooth px-4 py-6 md:px-6"
         >
           <div class="mx-auto max-w-4xl space-y-7 pb-4">
             <div
@@ -150,7 +150,7 @@
                   :class="msg.role === 'user' ? 'items-end' : 'items-start'"
                 >
                   <div
-                    class="min-w-0 rounded-2xl px-4 py-3 md:px-5"
+                    class="min-w-0 max-w-full rounded-2xl px-4 py-3 md:px-5"
                     :class="
                       msg.role === 'user'
                         ? 'rounded-tr-sm bg-purple-200 text-white shadow-lg shadow-purple-600/10'
@@ -256,9 +256,9 @@
                           </div>
                           <div
                             v-if="isSourceExpanded(msg.id, source, sourceIndex)"
-                            class="mt-2 whitespace-pre-wrap border-t border-zinc-200/70 pt-2 leading-relaxed text-zinc-600"
+                            class="mt-2 border-t border-zinc-200/70 pt-2 text-zinc-600"
                           >
-                            {{ source.content }}
+                            <MarkdownRenderer :content="source.content || ''" />
                           </div>
                         </div>
                       </div>
@@ -414,6 +414,8 @@ const expandedSources = ref(new Set<string>())
 const sidebarOpen = ref(true)
 const scrollContainer = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+// 是否跳过下一次自动滚动
+const skipAutoScroll = ref(false)
 let observer: MutationObserver | null = null
 let copiedTimeout: ReturnType<typeof setTimeout> | undefined
 
@@ -497,16 +499,23 @@ function isSourceExpanded(
   return expandedSources.value.has(sourceKey(messageId, source, index))
 }
 
-function toggleSource(
+async function toggleSource(
   messageId: string,
   source: NonNullable<ChatMessage['sources']>[number],
   index: number,
 ) {
+  // 本次操作禁止自动滚动
+  skipAutoScroll.value = true
+
   const next = new Set(expandedSources.value)
   const key = sourceKey(messageId, source, index)
   if (next.has(key)) next.delete(key)
   else next.add(key)
   expandedSources.value = next
+
+  // 等待 Vue 完成 DOM 更新后恢复自动滚动
+  await nextTick()
+  skipAutoScroll.value = false
 }
 
 function cancelEdit() {
@@ -547,7 +556,10 @@ onMounted(async () => {
   await nextTick()
   scrollToBottom('auto')
   if (scrollContainer.value) {
-    observer = new MutationObserver(() => scrollToBottom('smooth'))
+    observer = new MutationObserver(() => {
+      if (skipAutoScroll.value) return
+      scrollToBottom('smooth')
+    })
     observer.observe(scrollContainer.value, {
       childList: true,
       subtree: true,

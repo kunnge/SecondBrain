@@ -17,6 +17,15 @@ export default defineConfig({
   // 前端开发服务器配置
   server: {
     port: 8011, // Vue启动端口
-    host: 'localhost', // 监听地址
+    host: '0.0.0.0', // 允许 FRP 转发到开发服务器
+    proxy: {
+      '/chat': 'http://127.0.0.1:8000',
+      '/conversations': 'http://127.0.0.1:8000',
+      '/documents': 'http://127.0.0.1:8000',
+      '/upload': 'http://127.0.0.1:8000',
+      '/health': 'http://127.0.0.1:8000',
+      '/evaluation': 'http://127.0.0.1:8000',
+      '/obsidian': 'http://127.0.0.1:8000',
+    },
   },
 })

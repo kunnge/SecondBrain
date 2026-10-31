@@ -8,6 +8,8 @@ load_dotenv()
 
 # 主数据库连接地址，未配置时使用本地 PostgreSQL 默认地址
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/knowledge_base")
+# Obsidian Vault 本地绝对路径；留空时仅禁用同步功能，不影响应用启动。
+OBSIDIAN_VAULT_PATH = os.getenv("OBSIDIAN_VAULT_PATH", r"E:\note").strip()
 # 默认用户 ID，用于开发环境下标识当前用户
 DEFAULT_USER_ID = os.getenv("DEFAULT_USER_ID", "dev-user")
 # LangGraph 检查点数据库地址，默认复用主数据库地址并移除 psycopg2 驱动标识
@@ -57,13 +59,17 @@ MAX_QUERY_LENGTH = int(os.getenv("MAX_QUERY_LENGTH", "20000"))
 # 检索与文档处理配置
 
 # 子块检索默认候选数量
-RETRIEVAL_CHILD_TOP_K = int(os.getenv("RETRIEVAL_CHILD_TOP_K", "12"))
+RETRIEVAL_CHILD_TOP_K = int(os.getenv("RETRIEVAL_CHILD_TOP_K", "32"))
 # 父块检索默认返回数量
 RETRIEVAL_PARENT_TOP_K = int(os.getenv("RETRIEVAL_PARENT_TOP_K", "4"))
 # 根据目标数量计算子块候选数时使用的倍数
 RETRIEVAL_CHILD_MULTIPLIER = int(os.getenv("RETRIEVAL_CHILD_MULTIPLIER", "3"))
 # 重排序阶段使用的父块候选数量下限或目标值，具体取决于调用代码
-RERANK_MIN_PARENT_K = int(os.getenv("RERANK_MIN_PARENT_K", "12"))
+RERANK_MIN_PARENT_K = int(os.getenv("RERANK_MIN_PARENT_K", "26"))
+# 最终父块数量乘以该倍数后作为重排序候选数下限
+RERANK_PARENT_MULTIPLIER = int(os.getenv("RERANK_PARENT_MULTIPLIER", "4"))
+# Reciprocal Rank Fusion 排名融合常数
+RRF_K = int(os.getenv("RRF_K", "100"))
 # 检索到目标块后，允许向前后扩展的相邻块窗口大小
 CONTEXT_NEIGHBOR_WINDOW = int(os.getenv("CONTEXT_NEIGHBOR_WINDOW", "1"))
 # 每个父块最多保留的子块数量

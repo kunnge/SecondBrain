@@ -9,11 +9,14 @@
 # Fused Results
 
 """使用 RRF 融合 Vector Search 和 BM25 Search 的结果"""
+from config.settings import RRF_K as CONFIG_RRF_K
+
 class RRFFuser:
     # RRF 常数，用于降低排名对最终得分的影响
-    RRF_K = 60
+    RRF_K = CONFIG_RRF_K
     """Vector + BM25 → RRF"""
-    def fuse(self,vector_results,bm25_results,limit: int = 30):
+    def fuse(self,vector_results,bm25_results,limit: int = 30, rrf_k: int | None = None):
+        effective_rrf_k = self.RRF_K if rrf_k is None else rrf_k
         # 保存每个 Chunk 最终的 RRF 得分
         rrf_scores = {}
         # 保存 Chunk ID 与原始检索结果的对应关系
@@ -40,7 +43,7 @@ class RRFFuser:
             # 根据 RRF 公式计算 Vector Search 对当前 Chunk 的贡献分数
             rrf_scores[row_id] = (
                 rrf_scores.get(row_id, 0.0)
-                + 1.0 / (self.RRF_K + rank)
+                + 1.0 / (effective_rrf_k + rank)
             )
         # BM25
         # 遍历 BM25 Search 结果，并记录每个 Chunk 的排名
@@ -56,7 +59,7 @@ class RRFFuser:
             # 根据 RRF 公式计算 BM25 Search 对当前 Chunk 的贡献分数
             rrf_scores[row_id] = (
                 rrf_scores.get(row_id, 0.0)
-                + 1.0 / (self.RRF_K + rank)
+                + 1.0 / (effective_rrf_k + rank)
             )
         # Vector 和 BM25 都没有返回结果时，直接返回空列表
         if not rrf_scores:
@@ -80,6 +83,7 @@ class RRFFuser:
                     "id": row_id,
                     "document_id": item.get("document_id"),
                     "parent_id": item.get("parent_id"),
+                    "block_id": item.get("block_id"),
                     "text": item.get("text"),
                     "chunk_metadata": item.get("chunk_metadata"),
                     "chunk_index": item.get("chunk_index"),

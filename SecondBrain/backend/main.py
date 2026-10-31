@@ -4,7 +4,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from agents.knowledge_agent import knowledge_agent
-from api import upload, chat, health, evaluation, documents
+from api import upload, chat, health, evaluation, documents, obsidian
+from services.obsidian_sync_service import obsidian_sync_service
+from db.database import db_manager
 from fastapi.middleware.cors import CORSMiddleware
 from config.settings import APP_VERSION, CHECKPOINTER_DATABASE_URL, CORS_ORIGINS, LANGGRAPH_STRICT_MSGPACK
 
@@ -14,6 +16,10 @@ async def lifespan(_app: FastAPI):
     import os
     os.environ.setdefault("LANGGRAPH_STRICT_MSGPACK", LANGGRAPH_STRICT_MSGPACK)
     from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+
+    # 每次应用程序启动后，都要重新检查数据库表，确认无误后再接受请求
+    db_manager.init_db()
+    obsidian_sync_service.mark_interrupted_jobs()
 
     async with AsyncPostgresSaver.from_conn_string(CHECKPOINTER_DATABASE_URL) as checkpointer:
         await checkpointer.setup()
@@ -63,3 +69,4 @@ app.include_router(chat.router)
 
 # 注册测试接口
 app.include_router(evaluation.router)
+app.include_router(obsidian.router)

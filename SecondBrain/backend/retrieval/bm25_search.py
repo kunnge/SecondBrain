@@ -26,7 +26,7 @@ class BM25Search:
     def refresh_bm25_index(self):
         # 查询所有 Child Chunk，parent_id 不为空表示当前记录是 Child Chunk
         sql = text(
-            """ SELECT id, document_id, parent_id, text, chunk_metadata, chunk_index FROM document_chunks WHERE parent_id IS NOT NULL AND text IS NOT NULL""")
+            """ SELECT id, document_id, parent_id, block_id, text, chunk_metadata, chunk_index FROM document_chunks WHERE parent_id IS NOT NULL AND text IS NOT NULL""")
         # 执行 SQL 查询并获取所有 Child Chunk
         with self.engine.begin() as conn:
             rows = conn.execute(sql).fetchall()
@@ -79,6 +79,7 @@ class BM25Search:
                 "id": row.id,
                 "document_id": row.document_id,
                 "parent_id": row.parent_id,
+                "block_id": row.block_id,
                 "text": row.text,
                 "chunk_metadata": row.chunk_metadata,
                 "chunk_index": row.chunk_index,

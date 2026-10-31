@@ -80,3 +80,50 @@ class Message(Base):
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc), nullable=False, comment="消息创建时间")
 
     conversation = relationship("Conversation", back_populates="messages")
+
+# 上传文件表
+class ObsidianSyncFile(Base):
+    __tablename__ = "obsidian_sync_files"
+    __table_args__ = (
+        UniqueConstraint("relative_path", name="uq_obsidian_sync_files_relative_path"),
+        Index("ix_obsidian_sync_files_document_id", "document_id"),
+        {"comment": "Obsidian Vault Markdown 文件同步映射"},
+    )
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, comment="同步文件记录 ID")
+    relative_path = Column(String(1024), nullable=False, comment="相对于 Vault 的 POSIX 文件路径")
+    content_hash = Column(String(64), nullable=False, comment="最近一次同步尝试的 SHA-256")
+    document_id = Column(String(36), ForeignKey("documents.id", ondelete="SET NULL"), nullable=True, comment="对应知识库文档 ID")
+    synced_at = Column(DateTime(timezone=True), nullable=True, comment="最近一次成功同步时间")
+    status = Column(String(20), nullable=False, default="pending", server_default="pending", comment="文件同步状态")
+    error = Column(Text, nullable=True, comment="最近一次同步错误")
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False, comment="同步记录更新时间")
+
+# 每次上传的记录表
+class ObsidianSyncJob(Base):
+    __tablename__ = "obsidian_sync_jobs"
+    __table_args__ = (
+        Index(
+            "uq_obsidian_sync_jobs_active",
+            "active_lock",
+            unique=True,
+            postgresql_where=text("status IN ('queued', 'running')"),
+        ),
+        Index("ix_obsidian_sync_jobs_created_at", "created_at"),
+        {"comment": "Obsidian Vault 批量同步任务"},
+    )
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, comment="同步任务 ID")
+    status = Column(String(20), nullable=False, default="queued", server_default="queued", comment="任务状态")
+    active_lock = Column(Integer, nullable=False, default=1, server_default="1", comment="活动任务唯一锁")
+    scanned_count = Column(Integer, nullable=False, default=0, server_default="0", comment="扫描到的 Markdown 文件数")
+    added_count = Column(Integer, nullable=False, default=0, server_default="0", comment="新增文档数")
+    updated_count = Column(Integer, nullable=False, default=0, server_default="0", comment="更新文档数")
+    skipped_count = Column(Integer, nullable=False, default=0, server_default="0", comment="跳过未变化文件数")
+    deleted_count = Column(Integer, nullable=False, default=0, server_default="0", comment="删除源文件对应文档数")
+    failed_count = Column(Integer, nullable=False, default=0, server_default="0", comment="处理失败文件数")
+    current_file = Column(String(1024), nullable=True, comment="当前正在处理的 Vault 相对路径")
+    errors = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"), comment="失败文件路径与错误详情")
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False, comment="任务创建时间")
+    started_at = Column(DateTime(timezone=True), nullable=True, comment="任务开始时间")
+    completed_at = Column(DateTime(timezone=True), nullable=True, comment="任务结束时间")

@@ -16,9 +16,15 @@
           <p class="hidden text-sm text-zinc-500 sm:block">整理文档与 AI 元数据</p>
         </div>
       </div>
-      <button class="action primary shrink-0" :disabled="uploading" @click="fileInput?.click()">
-        <Upload class="h-4 w-4" />{{ uploading ? '正在处理文档...' : '上传 Markdown' }}
-      </button>
+      <div class="flex shrink-0 flex-wrap items-center justify-end gap-2">
+        <button class="action" :disabled="syncActive" @click="startSync">
+          <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': syncActive }" />
+          {{ syncActive ? '正在同步 Obsidian...' : '同步 Obsidian' }}
+        </button>
+        <button class="action primary" :disabled="uploading" @click="fileInput?.click()">
+          <Upload class="h-4 w-4" />{{ uploading ? '正在处理文档...' : '上传 Markdown' }}
+        </button>
+      </div>
       <input
         ref="fileInput"
         type="file"
@@ -71,11 +77,9 @@
               <div class="h-4 w-full animate-pulse rounded bg-zinc-100"></div>
               <div class="h-4 w-5/6 animate-pulse rounded bg-zinc-100"></div>
             </div>
-            <pre
-              v-else
-              class="max-h-[60vh] overflow-auto whitespace-pre-wrap p-6 font-mono text-sm leading-7 text-zinc-700"
-              >{{ selected.content || '暂无 Markdown 内容' }}</pre
-            >
+            <div v-else class="max-h-[60vh] overflow-auto p-6 text-sm leading-7 text-zinc-700">
+              <MarkdownRenderer :content="selected.content || '暂无 Markdown 内容'" />
+            </div>
           </section>
 
           <aside class="panel h-fit p-5">
@@ -140,6 +144,33 @@
               ><span>分类</span>
             </div>
           </div>
+        </section>
+
+        <section v-if="syncJob" class="panel space-y-3 p-5" aria-live="polite">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-semibold">Obsidian 同步</h3>
+              <p class="mt-1 text-xs text-zinc-500">
+                {{ syncStatusLabel(syncJob.status) }}<span v-if="syncJob.current_file"> · {{ syncJob.current_file }}</span>
+              </p>
+            </div>
+            <span :class="statusClass(syncJob.status === 'queued' ? 'pending' : syncJob.status === 'running' ? 'processing' : syncJob.status === 'completed' ? 'completed' : 'failed')">
+              {{ syncStatusLabel(syncJob.status) }}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-sm sm:grid-cols-6">
+            <div><strong>{{ syncJob.scanned_count }}</strong><small class="ml-1 text-zinc-500">扫描</small></div>
+            <div><strong>{{ syncJob.added_count }}</strong><small class="ml-1 text-zinc-500">新增</small></div>
+            <div><strong>{{ syncJob.updated_count }}</strong><small class="ml-1 text-zinc-500">更新</small></div>
+            <div><strong>{{ syncJob.skipped_count }}</strong><small class="ml-1 text-zinc-500">跳过</small></div>
+            <div><strong>{{ syncJob.deleted_count }}</strong><small class="ml-1 text-zinc-500">删除</small></div>
+            <div><strong>{{ syncJob.failed_count }}</strong><small class="ml-1 text-zinc-500">失败</small></div>
+          </div>
+          <ul v-if="syncJob.errors.length" class="max-h-36 space-y-1 overflow-auto rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+            <li v-for="(item, index) in syncJob.errors" :key="`${item.path}-${index}`">
+              <strong>{{ item.path || '任务' }}：</strong>{{ item.error }}
+            </li>
+          </ul>
         </section>
 
         <section class="toolbar-panel">
@@ -286,14 +317,18 @@ import {
   Upload,
 } from 'lucide-vue-next'
 import Toast from '@/components/Toast.vue'
+import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
 import { getDocument, listDocuments, updateDocument, type KnowledgeDocument } from '@/api/knowledge'
 import { uploadMarkdown } from '@/api/chat'
+import { getObsidianSync, startObsidianSync, type ObsidianSyncJob } from '@/api/obsidian'
 
 const docs = ref<KnowledgeDocument[]>([])
 const selected = ref<KnowledgeDocument | null>(null)
 const loading = ref(true)
 const detailLoading = ref(false)
 const uploading = ref(false)
+const syncJob = ref<ObsidianSyncJob | null>(null)
+const syncActive = computed(() => syncJob.value?.status === 'queued' || syncJob.value?.status === 'running')
 const saving = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const query = ref('')
@@ -313,6 +348,8 @@ const categoriesForEdit = computed(() =>
 )
 let toastTimer: ReturnType<typeof setTimeout> | undefined
 let searchTimer: ReturnType<typeof setTimeout> | undefined
+let syncTimer: ReturnType<typeof setInterval> | undefined
+let syncRequestPending = false
 
 const message = (text: string, type: 'success' | 'error' = 'success') => {
   toast.message = text
@@ -340,6 +377,8 @@ const statusClass = (
     completed: 'status-badge completed',
     failed: 'status-badge failed',
   })[status]
+const syncStatusLabel = (status: ObsidianSyncJob['status']) =>
+  ({ queued: '等待开始', running: '同步进行中', completed: '同步完成', failed: '同步失败' })[status]
 const date = (value: string) => {
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime()) ? '未知时间' : parsed.toLocaleDateString('zh-CN')
@@ -472,12 +511,57 @@ async function selectFile(event: Event) {
   }
 }
 
+function stopSyncPolling() {
+  if (syncTimer) clearInterval(syncTimer)
+  syncTimer = undefined
+}
+
+async function refreshSyncStatus(taskId: string) {
+  if (syncRequestPending) return
+  syncRequestPending = true
+  try {
+    const result = await getObsidianSync(taskId)
+    syncJob.value = result
+    if (!['queued', 'running'].includes(result.status)) {
+      stopSyncPolling()
+      if (result.status === 'completed') await fetchDocs()
+    }
+  } catch (error) {
+    stopSyncPolling()
+    message(`获取 Obsidian 同步状态失败：${errorText(error)}`, 'error')
+  } finally {
+    syncRequestPending = false
+  }
+}
+
+function watchSync(taskId: string) {
+  localStorage.setItem('obsidianSyncTaskId', taskId)
+  stopSyncPolling()
+  syncTimer = setInterval(() => void refreshSyncStatus(taskId), 1500)
+  void refreshSyncStatus(taskId)
+}
+
+async function startSync() {
+  if (syncActive.value) return
+  try {
+    const job = await startObsidianSync()
+    syncJob.value = job
+    watchSync(job.id)
+    message('已启动 Obsidian Vault 同步')
+  } catch (error) {
+    message(`启动 Obsidian 同步失败：${errorText(error)}`, 'error')
+  }
+}
+
 onMounted(() => {
   void fetchDocs()
+  const taskId = localStorage.getItem('obsidianSyncTaskId')
+  if (taskId) watchSync(taskId)
 })
 onUnmounted(() => {
   if (toastTimer) clearTimeout(toastTimer)
   if (searchTimer) clearTimeout(searchTimer)
+  stopSyncPolling()
 })
 </script>
 
