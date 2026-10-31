@@ -1,3 +1,19 @@
-
+# Node.js
 node_modules/
 dist/
+
+# IDE
+.idea/
+.vscode/
+
+# AI 工具配置
+.agents/
+
+# Python 模型文件
+backend/models/
+.env
+# RAG 评估生成文件
+backend/evaluation/evaluation_chunks/
+backend/evaluation/generated_review/
+backend/evaluation/generated_results/
+backend/evaluation/generated_tuning/
