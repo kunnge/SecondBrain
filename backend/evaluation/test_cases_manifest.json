@@ -1,12 +1,11 @@
 {
-  "document_count": 24,
-  "case_count": 120,
+  "document_count": 16,
+  "case_count": 80,
   "suite_counts": {
-    "fact": 48,
-    "heading": 48,
-    "synthesis": 24
+    "fact": 32,
+    "heading": 32,
+    "synthesis": 16
   },
-  "data_hash": "d3a771d8fb981979b08c4f47053ad117a5ed567e1b89e3f65bddb02917132e2f",
   "documents": [
     {
       "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
@@ -15,13 +14,7 @@
       "child_count": 168
     },
     {
-      "document_id": "91d36671-00da-43a3-9900-73b43f30f86c",
-      "filename": "git的使用.md",
-      "parent_count": 5,
-      "child_count": 26
-    },
-    {
-      "document_id": "8abcc373-4e14-49d2-a250-bb26bad18902",
+      "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
       "filename": "html知识点.md",
       "parent_count": 209,
       "child_count": 230
@@ -51,22 +44,10 @@
       "child_count": 81
     },
     {
-      "document_id": "07db6ed1-cc44-46bd-a937-c053214d94e8",
-      "filename": "nginx经验.md",
-      "parent_count": 10,
-      "child_count": 13
-    },
-    {
       "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
       "filename": "shell脚本.md",
       "parent_count": 27,
       "child_count": 76
-    },
-    {
-      "document_id": "dc73296f-2aab-4695-b033-47cd3994171e",
-      "filename": "SpringBootWeb.md",
-      "parent_count": 51,
-      "child_count": 150
     },
     {
       "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
@@ -93,46 +74,16 @@
       "child_count": 36
     },
     {
-      "document_id": "3341f1d8-ac08-4a80-8723-8cd63132814b",
-      "filename": "搭建个人知识库项目.md",
-      "parent_count": 27,
-      "child_count": 42
-    },
-    {
-      "document_id": "2c938fa0-ce3d-4fdb-b13a-f52489e8d75e",
-      "filename": "每个容器代码详细说明.md",
-      "parent_count": 20,
-      "child_count": 86
-    },
-    {
-      "document_id": "cf39ae76-a6a6-4a1c-b50e-3704e7ee3e98",
-      "filename": "爬虫日记.md",
-      "parent_count": 87,
-      "child_count": 390
-    },
-    {
-      "document_id": "654b7fe2-aa2e-44a9-af7c-00a2ea89e19d",
+      "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
       "filename": "知识点.md",
-      "parent_count": 22,
-      "child_count": 58
+      "parent_count": 78,
+      "child_count": 325
     },
     {
       "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
       "filename": "知识点总结.md",
       "parent_count": 19,
       "child_count": 23
-    },
-    {
-      "document_id": "30764d19-6512-451a-a98f-3c1be277f5e4",
-      "filename": "编程经验分享.md",
-      "parent_count": 1,
-      "child_count": 3
-    },
-    {
-      "document_id": "2b29c96c-55a0-453b-a5ef-36ce6b1087a9",
-      "filename": "网页开发手册.md",
-      "parent_count": 13,
-      "child_count": 59
     },
     {
       "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
@@ -152,6 +103,5 @@
       "parent_count": 6,
       "child_count": 17
     }
-  ],
-  "output_dir": "D:\\desktop\\ai知识库\\SecondBrain\\backend\\evaluation\\generated_review"
+  ]
 }

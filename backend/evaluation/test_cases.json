@@ -1,0 +1,2311 @@
+[
+  {
+    "id": "doc01_detail",
+    "suite": "fact",
+    "query": "《01内训笔记》中提到的“第一步”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+    "source_filename": "01内训笔记.md",
+    "relevant_parent_ids": [
+      "23a72537-3fe8-4b0f-bab9-1be84f7620ae"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "23a72537-3fe8-4b0f-bab9-1be84f7620ae",
+        "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_e42c7da9"
+      }
+    ],
+    "expected_keywords": [
+      "第一步",
+      "内训",
+      "img/Pasted"
+    ]
+  },
+  {
+    "id": "doc01_fact",
+    "suite": "fact",
+    "query": "《01内训笔记》中关于“第一步”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+    "source_filename": "01内训笔记.md",
+    "relevant_parent_ids": [
+      "23a72537-3fe8-4b0f-bab9-1be84f7620ae"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "23a72537-3fe8-4b0f-bab9-1be84f7620ae",
+        "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_e42c7da9"
+      }
+    ],
+    "expected_keywords": [
+      "第一步",
+      "内训",
+      "img/Pasted"
+    ]
+  },
+  {
+    "id": "doc01_heading",
+    "suite": "heading",
+    "query": "在《01内训笔记》的“MongoDB”部分，关于“在模块”记录了哪些要点？",
+    "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+    "source_filename": "01内训笔记.md",
+    "relevant_parent_ids": [
+      "5e80cc48-8d6e-4b7f-b8b4-066b7e4ee17d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "5e80cc48-8d6e-4b7f-b8b4-066b7e4ee17d",
+        "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_facb5db2"
+      }
+    ],
+    "expected_keywords": [
+      "MongoDB",
+      "在模块",
+      "pom",
+      "文件添加"
+    ]
+  },
+  {
+    "id": "doc01_position",
+    "suite": "heading",
+    "query": "《01内训笔记》中提到的“在模块”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+    "source_filename": "01内训笔记.md",
+    "relevant_parent_ids": [
+      "5e80cc48-8d6e-4b7f-b8b4-066b7e4ee17d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "5e80cc48-8d6e-4b7f-b8b4-066b7e4ee17d",
+        "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_facb5db2"
+      }
+    ],
+    "expected_keywords": [
+      "MongoDB",
+      "在模块",
+      "pom",
+      "文件添加"
+    ]
+  },
+  {
+    "id": "doc01_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《01内训笔记》中“第一步”与“text”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+    "source_filename": "01内训笔记.md",
+    "relevant_parent_ids": [
+      "23a72537-3fe8-4b0f-bab9-1be84f7620ae",
+      "b0d8a534-ed7f-4461-abe3-1131fe062c0d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "23a72537-3fe8-4b0f-bab9-1be84f7620ae",
+        "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_e42c7da9"
+      },
+      {
+        "parent_id": "b0d8a534-ed7f-4461-abe3-1131fe062c0d",
+        "document_id": "0da2be3f-6328-4580-a43e-65d9f013864a",
+        "block_id": "b_b1bc990a",
+        "chunk_index": 0,
+        "child_index": 4,
+        "export_child_id": "c_dca42b02"
+      }
+    ],
+    "expected_keywords": [
+      "第一步",
+      "内训",
+      "img/Pasted",
+      "java",
+      "部署",
+      "手动部署和",
+      "是手动部署",
+      "是自动部署"
+    ]
+  },
+  {
+    "id": "doc02_detail",
+    "suite": "fact",
+    "query": "《html知识点》中提到的“经常查阅文档是一个非常好”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+    "source_filename": "html知识点.md",
+    "relevant_parent_ids": [
+      "fd29f39f-5a1b-4155-b3ca-55a6b7310e5a"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "fd29f39f-5a1b-4155-b3ca-55a6b7310e5a",
+        "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_4cbd76db"
+      }
+    ],
+    "expected_keywords": [
+      "文档查阅",
+      "经常查阅文档是一个非常好",
+      "的学习习惯",
+      "推荐的网址"
+    ]
+  },
+  {
+    "id": "doc02_fact",
+    "suite": "fact",
+    "query": "《html知识点》中关于“经常查阅文档是一个非常好”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+    "source_filename": "html知识点.md",
+    "relevant_parent_ids": [
+      "fd29f39f-5a1b-4155-b3ca-55a6b7310e5a"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "fd29f39f-5a1b-4155-b3ca-55a6b7310e5a",
+        "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_4cbd76db"
+      }
+    ],
+    "expected_keywords": [
+      "文档查阅",
+      "经常查阅文档是一个非常好",
+      "的学习习惯",
+      "推荐的网址"
+    ]
+  },
+  {
+    "id": "doc02_heading",
+    "suite": "heading",
+    "query": "在《html知识点》的“CSS > 内边距（padding) > 内边距的使用方式”部分，关于“padding”记录了哪些要点？",
+    "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+    "source_filename": "html知识点.md",
+    "relevant_parent_ids": [
+      "03b7b9d8-1e78-4a23-ad0a-5939fdb0a454"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "03b7b9d8-1e78-4a23-ad0a-5939fdb0a454",
+        "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_43cb99a4"
+      }
+    ],
+    "expected_keywords": [
+      "CSS",
+      "内边距",
+      "padding",
+      "属性用于设置内边距",
+      "即边框与内容之间的距离"
+    ]
+  },
+  {
+    "id": "doc02_position",
+    "suite": "heading",
+    "query": "《html知识点》中提到的“padding”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+    "source_filename": "html知识点.md",
+    "relevant_parent_ids": [
+      "03b7b9d8-1e78-4a23-ad0a-5939fdb0a454"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "03b7b9d8-1e78-4a23-ad0a-5939fdb0a454",
+        "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_43cb99a4"
+      }
+    ],
+    "expected_keywords": [
+      "CSS",
+      "内边距",
+      "padding",
+      "属性用于设置内边距",
+      "即边框与内容之间的距离"
+    ]
+  },
+  {
+    "id": "doc02_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《html知识点》中“经常查阅文档是一个非常好”与“text”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+    "source_filename": "html知识点.md",
+    "relevant_parent_ids": [
+      "fd29f39f-5a1b-4155-b3ca-55a6b7310e5a",
+      "1f79e40f-6a22-4732-ab47-dc69c1d575be"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "fd29f39f-5a1b-4155-b3ca-55a6b7310e5a",
+        "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_4cbd76db"
+      },
+      {
+        "parent_id": "1f79e40f-6a22-4732-ab47-dc69c1d575be",
+        "document_id": "94dd0530-9cf0-474c-bcad-56c281e48ef7",
+        "block_id": "b_c3c1c65a",
+        "chunk_index": 0,
+        "child_index": 3,
+        "export_child_id": "c_8e16a9c2"
+      }
+    ],
+    "expected_keywords": [
+      "文档查阅",
+      "经常查阅文档是一个非常好",
+      "的学习习惯",
+      "推荐的网址",
+      "其他特性",
+      "过渡练习",
+      "Pasted",
+      "image"
+    ]
+  },
+  {
+    "id": "doc03_detail",
+    "suite": "fact",
+    "query": "《javascript知识点》中提到的“滑动模块的插件”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+    "source_filename": "javascript知识点.md",
+    "relevant_parent_ids": [
+      "cd0bc1ff-d706-42dc-9abc-84e3b11df28f"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "cd0bc1ff-d706-42dc-9abc-84e3b11df28f",
+        "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_bd7f26df"
+      }
+    ],
+    "expected_keywords": [
+      "滑动模块的插件",
+      "https",
+      "blog.csdn.net/aiwwy/artic"
+    ]
+  },
+  {
+    "id": "doc03_fact",
+    "suite": "fact",
+    "query": "《javascript知识点》中关于“滑动模块的插件”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+    "source_filename": "javascript知识点.md",
+    "relevant_parent_ids": [
+      "cd0bc1ff-d706-42dc-9abc-84e3b11df28f"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "cd0bc1ff-d706-42dc-9abc-84e3b11df28f",
+        "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_bd7f26df"
+      }
+    ],
+    "expected_keywords": [
+      "滑动模块的插件",
+      "https",
+      "blog.csdn.net/aiwwy/artic"
+    ]
+  },
+  {
+    "id": "doc03_heading",
+    "suite": "heading",
+    "query": "在《javascript知识点》的“Web APIs > 事件类型 > 键盘事件”部分，关于“keydown”记录了哪些要点？",
+    "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+    "source_filename": "javascript知识点.md",
+    "relevant_parent_ids": [
+      "7dfb7899-4376-4305-a60a-906f6628a10b"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "7dfb7899-4376-4305-a60a-906f6628a10b",
+        "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_788ccdbb"
+      }
+    ],
+    "expected_keywords": [
+      "Web",
+      "APIs",
+      "事件类型",
+      "keydown",
+      "键盘按下触发",
+      "keyup"
+    ]
+  },
+  {
+    "id": "doc03_position",
+    "suite": "heading",
+    "query": "《javascript知识点》中提到的“keydown”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+    "source_filename": "javascript知识点.md",
+    "relevant_parent_ids": [
+      "7dfb7899-4376-4305-a60a-906f6628a10b"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "7dfb7899-4376-4305-a60a-906f6628a10b",
+        "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_788ccdbb"
+      }
+    ],
+    "expected_keywords": [
+      "Web",
+      "APIs",
+      "事件类型",
+      "keydown",
+      "键盘按下触发",
+      "keyup"
+    ]
+  },
+  {
+    "id": "doc03_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《javascript知识点》中“滑动模块的插件”与“ES”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+    "source_filename": "javascript知识点.md",
+    "relevant_parent_ids": [
+      "cd0bc1ff-d706-42dc-9abc-84e3b11df28f",
+      "633de1ca-b825-4b72-bced-d943185e80c6"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "cd0bc1ff-d706-42dc-9abc-84e3b11df28f",
+        "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_bd7f26df"
+      },
+      {
+        "parent_id": "633de1ca-b825-4b72-bced-d943185e80c6",
+        "document_id": "0cadb820-9a4e-415e-ad69-e101dd40f1a1",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_0e7844e7"
+      }
+    ],
+    "expected_keywords": [
+      "滑动模块的插件",
+      "https",
+      "blog.csdn.net/aiwwy/artic",
+      "ES6",
+      "深度解构",
+      "ES",
+      "实用的深度解构赋值方法",
+      "CSDN"
+    ]
+  },
+  {
+    "id": "doc04_detail",
+    "suite": "fact",
+    "query": "《Liunx知识点》中提到的“CentOS7”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+    "source_filename": "Liunx知识点.md",
+    "relevant_parent_ids": [
+      "e987c8ce-07c3-465d-9a1d-7d429b77aaa4"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e987c8ce-07c3-465d-9a1d-7d429b77aaa4",
+        "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ec64968a"
+      }
+    ],
+    "expected_keywords": [
+      "CentOS7",
+      "的下载安装配置教程",
+      "MDN"
+    ]
+  },
+  {
+    "id": "doc04_fact",
+    "suite": "fact",
+    "query": "《Liunx知识点》中关于“CentOS7”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+    "source_filename": "Liunx知识点.md",
+    "relevant_parent_ids": [
+      "e987c8ce-07c3-465d-9a1d-7d429b77aaa4"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e987c8ce-07c3-465d-9a1d-7d429b77aaa4",
+        "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ec64968a"
+      }
+    ],
+    "expected_keywords": [
+      "CentOS7",
+      "的下载安装配置教程",
+      "MDN"
+    ]
+  },
+  {
+    "id": "doc04_heading",
+    "suite": "heading",
+    "query": "在《Liunx知识点》的“Linux常用操作 > 日期”部分，关于“语法”记录了哪些要点？",
+    "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+    "source_filename": "Liunx知识点.md",
+    "relevant_parent_ids": [
+      "8a50fd78-6ba3-4209-9275-927c07252bea"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "8a50fd78-6ba3-4209-9275-927c07252bea",
+        "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_964a1b29"
+      }
+    ],
+    "expected_keywords": [
+      "Linux",
+      "常用操作",
+      "日期",
+      "语法",
+      "date",
+      "格式化字符串"
+    ]
+  },
+  {
+    "id": "doc04_position",
+    "suite": "heading",
+    "query": "《Liunx知识点》中提到的“语法”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+    "source_filename": "Liunx知识点.md",
+    "relevant_parent_ids": [
+      "8a50fd78-6ba3-4209-9275-927c07252bea"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "8a50fd78-6ba3-4209-9275-927c07252bea",
+        "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_964a1b29"
+      }
+    ],
+    "expected_keywords": [
+      "Linux",
+      "常用操作",
+      "日期",
+      "语法",
+      "date",
+      "格式化字符串"
+    ]
+  },
+  {
+    "id": "doc04_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《Liunx知识点》中“CentOS7”与“Linux”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+    "source_filename": "Liunx知识点.md",
+    "relevant_parent_ids": [
+      "e987c8ce-07c3-465d-9a1d-7d429b77aaa4",
+      "f4154901-d832-4dcc-be08-bc6288825d8e"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e987c8ce-07c3-465d-9a1d-7d429b77aaa4",
+        "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ec64968a"
+      },
+      {
+        "parent_id": "f4154901-d832-4dcc-be08-bc6288825d8e",
+        "document_id": "80e44c61-fb41-4156-bb15-d6106425a80d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_b659ca6d"
+      }
+    ],
+    "expected_keywords": [
+      "CentOS7",
+      "的下载安装配置教程",
+      "MDN",
+      "Linux",
+      "常用操作",
+      "Vi",
+      "学习",
+      "vi"
+    ]
+  },
+  {
+    "id": "doc05_detail",
+    "suite": "fact",
+    "query": "《Mybatis知识点》中提到的“text”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+    "source_filename": "Mybatis知识点.md",
+    "relevant_parent_ids": [
+      "4b27ed0c-ae88-4e60-a943-59da7264426b"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4b27ed0c-ae88-4e60-a943-59da7264426b",
+        "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+        "block_id": "b_80585b5d",
+        "chunk_index": 0,
+        "child_index": 5,
+        "export_child_id": "c_8cc0bd80"
+      }
+    ],
+    "expected_keywords": [
+      "Mybatis",
+      "优秀的持久层框架",
+      "用于简化",
+      "JDBC"
+    ]
+  },
+  {
+    "id": "doc05_fact",
+    "suite": "fact",
+    "query": "《Mybatis知识点》中关于“text”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+    "source_filename": "Mybatis知识点.md",
+    "relevant_parent_ids": [
+      "4b27ed0c-ae88-4e60-a943-59da7264426b"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4b27ed0c-ae88-4e60-a943-59da7264426b",
+        "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+        "block_id": "b_a338ab76",
+        "chunk_index": 0,
+        "child_index": 7,
+        "export_child_id": "c_cbae8f49"
+      }
+    ],
+    "expected_keywords": [
+      "Mybatis",
+      "优秀的持久层框架",
+      "用于简化",
+      "JDBC"
+    ]
+  },
+  {
+    "id": "doc05_heading",
+    "suite": "heading",
+    "query": "在《Mybatis知识点》的“lombok > 使用lombok > mybatis日志输出”部分，关于“作用”记录了哪些要点？",
+    "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+    "source_filename": "Mybatis知识点.md",
+    "relevant_parent_ids": [
+      "82c8af57-e3be-4d11-ba3f-2e0c4c9b7fc7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "82c8af57-e3be-4d11-ba3f-2e0c4c9b7fc7",
+        "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_981b1a81"
+      }
+    ],
+    "expected_keywords": [
+      "lombok",
+      "使用",
+      "mybatis",
+      "作用",
+      "控制台打印",
+      "SQL"
+    ]
+  },
+  {
+    "id": "doc05_position",
+    "suite": "heading",
+    "query": "《Mybatis知识点》中提到的“作用”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+    "source_filename": "Mybatis知识点.md",
+    "relevant_parent_ids": [
+      "82c8af57-e3be-4d11-ba3f-2e0c4c9b7fc7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "82c8af57-e3be-4d11-ba3f-2e0c4c9b7fc7",
+        "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_981b1a81"
+      }
+    ],
+    "expected_keywords": [
+      "lombok",
+      "使用",
+      "mybatis",
+      "作用",
+      "控制台打印",
+      "SQL"
+    ]
+  },
+  {
+    "id": "doc05_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《Mybatis知识点》中“text”与“text”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+    "source_filename": "Mybatis知识点.md",
+    "relevant_parent_ids": [
+      "4b27ed0c-ae88-4e60-a943-59da7264426b",
+      "8ff7b7a6-5566-42ce-a3e7-cbf9c735c403"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4b27ed0c-ae88-4e60-a943-59da7264426b",
+        "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+        "block_id": "b_a338ab76",
+        "chunk_index": 0,
+        "child_index": 7,
+        "export_child_id": "c_cbae8f49"
+      },
+      {
+        "parent_id": "8ff7b7a6-5566-42ce-a3e7-cbf9c735c403",
+        "document_id": "d9655d24-26bb-4f4e-a2c1-bf04b64dfac5",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_488909e2"
+      }
+    ],
+    "expected_keywords": [
+      "Mybatis",
+      "优秀的持久层框架",
+      "用于简化",
+      "JDBC",
+      "MyBatis-Plus",
+      "模版三层架构",
+      "Mapper",
+      "text"
+    ]
+  },
+  {
+    "id": "doc06_detail",
+    "suite": "fact",
+    "query": "《MySQL》中提到的“SQL”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+    "source_filename": "MySQL.md",
+    "relevant_parent_ids": [
+      "bc60ad11-57fa-4c63-8028-9eb7323654b0"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "bc60ad11-57fa-4c63-8028-9eb7323654b0",
+        "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_28b87d66"
+      }
+    ],
+    "expected_keywords": [
+      "SQL",
+      "结构化查询语言",
+      "一门操作关系型数据库的编"
+    ]
+  },
+  {
+    "id": "doc06_fact",
+    "suite": "fact",
+    "query": "《MySQL》中关于“SQL”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+    "source_filename": "MySQL.md",
+    "relevant_parent_ids": [
+      "bc60ad11-57fa-4c63-8028-9eb7323654b0"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "bc60ad11-57fa-4c63-8028-9eb7323654b0",
+        "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_28b87d66"
+      }
+    ],
+    "expected_keywords": [
+      "SQL",
+      "结构化查询语言",
+      "一门操作关系型数据库的编"
+    ]
+  },
+  {
+    "id": "doc06_heading",
+    "suite": "heading",
+    "query": "在《MySQL》的“explain执行计划 > 核心字段 > Extra (是否回表)”部分，关于“含义”记录了哪些要点？",
+    "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+    "source_filename": "MySQL.md",
+    "relevant_parent_ids": [
+      "49b6d6f2-1659-427d-a200-9b54a7576ea7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "49b6d6f2-1659-427d-a200-9b54a7576ea7",
+        "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_c8a67209"
+      }
+    ],
+    "expected_keywords": [
+      "explain",
+      "执行计划",
+      "核心字段",
+      "含义",
+      "Using",
+      "index"
+    ]
+  },
+  {
+    "id": "doc06_position",
+    "suite": "heading",
+    "query": "《MySQL》中提到的“含义”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+    "source_filename": "MySQL.md",
+    "relevant_parent_ids": [
+      "49b6d6f2-1659-427d-a200-9b54a7576ea7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "49b6d6f2-1659-427d-a200-9b54a7576ea7",
+        "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_c8a67209"
+      }
+    ],
+    "expected_keywords": [
+      "explain",
+      "执行计划",
+      "核心字段",
+      "含义",
+      "Using",
+      "index"
+    ]
+  },
+  {
+    "id": "doc06_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《MySQL》中“SQL”与“IF”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+    "source_filename": "MySQL.md",
+    "relevant_parent_ids": [
+      "bc60ad11-57fa-4c63-8028-9eb7323654b0",
+      "994c2e46-4b22-4158-a813-323cff06357c"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "bc60ad11-57fa-4c63-8028-9eb7323654b0",
+        "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_28b87d66"
+      },
+      {
+        "parent_id": "994c2e46-4b22-4158-a813-323cff06357c",
+        "document_id": "e82e1d88-2797-48c1-81f0-52b7b500638f",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_febafb19"
+      }
+    ],
+    "expected_keywords": [
+      "SQL",
+      "结构化查询语言",
+      "一门操作关系型数据库的编",
+      "函数",
+      "其他常用函数",
+      "IF",
+      "condition",
+      "value_if_true"
+    ]
+  },
+  {
+    "id": "doc07_detail",
+    "suite": "fact",
+    "query": "《shell脚本》中提到的“类型”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+    "source_filename": "shell脚本.md",
+    "relevant_parent_ids": [
+      "7102d86d-0728-4d00-b536-c098fef0962d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "7102d86d-0728-4d00-b536-c098fef0962d",
+        "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+        "block_id": "b_7b19267b",
+        "chunk_index": 1,
+        "child_index": 2,
+        "export_child_id": "c_0c8a506b"
+      }
+    ],
+    "expected_keywords": [
+      "类型",
+      "优点",
+      "缺点"
+    ]
+  },
+  {
+    "id": "doc07_fact",
+    "suite": "fact",
+    "query": "《shell脚本》中关于“类型”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+    "source_filename": "shell脚本.md",
+    "relevant_parent_ids": [
+      "7102d86d-0728-4d00-b536-c098fef0962d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "7102d86d-0728-4d00-b536-c098fef0962d",
+        "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+        "block_id": "b_7b19267b",
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_b495348c"
+      }
+    ],
+    "expected_keywords": [
+      "类型",
+      "优点",
+      "缺点"
+    ]
+  },
+  {
+    "id": "doc07_heading",
+    "suite": "heading",
+    "query": "在《shell脚本》的“Shell 引号与展开”部分，关于“单引号”记录了哪些要点？",
+    "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+    "source_filename": "shell脚本.md",
+    "relevant_parent_ids": [
+      "e6b1ef58-41bb-4c0f-acae-b14b2b31a3c3"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e6b1ef58-41bb-4c0f-acae-b14b2b31a3c3",
+        "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_706c4cfe"
+      }
+    ],
+    "expected_keywords": [
+      "Shell",
+      "引号与展开",
+      "单引号",
+      "作用",
+      "原样保留字符串"
+    ]
+  },
+  {
+    "id": "doc07_position",
+    "suite": "heading",
+    "query": "《shell脚本》中提到的“单引号”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+    "source_filename": "shell脚本.md",
+    "relevant_parent_ids": [
+      "e6b1ef58-41bb-4c0f-acae-b14b2b31a3c3"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e6b1ef58-41bb-4c0f-acae-b14b2b31a3c3",
+        "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_706c4cfe"
+      }
+    ],
+    "expected_keywords": [
+      "Shell",
+      "引号与展开",
+      "单引号",
+      "作用",
+      "原样保留字符串"
+    ]
+  },
+  {
+    "id": "doc07_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《shell脚本》中“类型”与“bash”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+    "source_filename": "shell脚本.md",
+    "relevant_parent_ids": [
+      "7102d86d-0728-4d00-b536-c098fef0962d",
+      "12c5d07e-9412-4b0a-8835-b55dea5b1c8d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "7102d86d-0728-4d00-b536-c098fef0962d",
+        "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+        "block_id": "b_7b19267b",
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_b495348c"
+      },
+      {
+        "parent_id": "12c5d07e-9412-4b0a-8835-b55dea5b1c8d",
+        "document_id": "207279db-9471-4912-b07a-e623ea21edf7",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_3398f5f9"
+      }
+    ],
+    "expected_keywords": [
+      "类型",
+      "优点",
+      "缺点",
+      "其他命令",
+      "bash",
+      "作用",
+      "检查"
+    ]
+  },
+  {
+    "id": "doc08_detail",
+    "suite": "fact",
+    "query": "《一人企业方法论》中提到的“github”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+    "source_filename": "一人企业方法论.md",
+    "relevant_parent_ids": [
+      "2a86a49e-1b9f-4506-ab27-1e0abfe74441"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "2a86a49e-1b9f-4506-ab27-1e0abfe74441",
+        "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_7357ee46"
+      }
+    ],
+    "expected_keywords": [
+      "github",
+      "链接",
+      "书籍"
+    ]
+  },
+  {
+    "id": "doc08_fact",
+    "suite": "fact",
+    "query": "《一人企业方法论》中关于“github”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+    "source_filename": "一人企业方法论.md",
+    "relevant_parent_ids": [
+      "2a86a49e-1b9f-4506-ab27-1e0abfe74441"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "2a86a49e-1b9f-4506-ab27-1e0abfe74441",
+        "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_7357ee46"
+      }
+    ],
+    "expected_keywords": [
+      "github",
+      "链接",
+      "书籍"
+    ]
+  },
+  {
+    "id": "doc08_heading",
+    "suite": "heading",
+    "query": "在《一人企业方法论》的“构建一人业务 > 一人企业≠一人业务”部分，关于“一人企业可以有多个一人业”记录了哪些要点？",
+    "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+    "source_filename": "一人企业方法论.md",
+    "relevant_parent_ids": [
+      "24b977c3-ab35-47d1-8a24-3a7dfa473bcd"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "24b977c3-ab35-47d1-8a24-3a7dfa473bcd",
+        "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+        "block_id": "b_3f3d24e9",
+        "chunk_index": 0,
+        "child_index": 3,
+        "export_child_id": "c_a6edbd56"
+      }
+    ],
+    "expected_keywords": [
+      "构建一人业务",
+      "一人企业",
+      "一人业务",
+      "一人企业不等同一人业务",
+      "站在失败业务的肩上",
+      "如果我们能把失败项目的中"
+    ]
+  },
+  {
+    "id": "doc08_position",
+    "suite": "heading",
+    "query": "《一人企业方法论》中提到的“用户细分为”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+    "source_filename": "一人企业方法论.md",
+    "relevant_parent_ids": [
+      "24b977c3-ab35-47d1-8a24-3a7dfa473bcd"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "24b977c3-ab35-47d1-8a24-3a7dfa473bcd",
+        "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+        "block_id": "b_fb589478",
+        "chunk_index": 0,
+        "child_index": 9,
+        "export_child_id": "c_337d1a93"
+      }
+    ],
+    "expected_keywords": [
+      "构建一人业务",
+      "一人企业",
+      "一人业务",
+      "一人企业不等同一人业务",
+      "站在失败业务的肩上",
+      "如果我们能把失败项目的中"
+    ]
+  },
+  {
+    "id": "doc08_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《一人企业方法论》中“github”与“搭建方式”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+    "source_filename": "一人企业方法论.md",
+    "relevant_parent_ids": [
+      "2a86a49e-1b9f-4506-ab27-1e0abfe74441",
+      "5f879e01-1446-4e33-a3ef-c95742d0bd9d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "2a86a49e-1b9f-4506-ab27-1e0abfe74441",
+        "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_7357ee46"
+      },
+      {
+        "parent_id": "5f879e01-1446-4e33-a3ef-c95742d0bd9d",
+        "document_id": "ef079a89-dc50-432a-94d9-8f6ee953f4f0",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_02f880ca"
+      }
+    ],
+    "expected_keywords": [
+      "github",
+      "链接",
+      "书籍",
+      "基础设施及搭建",
+      "搭建一人企业基础设施",
+      "搭建方式",
+      "自行开发或雇人开发",
+      "外包"
+    ]
+  },
+  {
+    "id": "doc09_detail",
+    "suite": "fact",
+    "query": "《刷题技巧》中提到的“教你写一手漂亮的伪代码”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+    "source_filename": "刷题技巧.md",
+    "relevant_parent_ids": [
+      "0ea5835c-7901-4149-b93f-9d7dfaefdd4e"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "0ea5835c-7901-4149-b93f-9d7dfaefdd4e",
+        "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_dccbab25"
+      }
+    ],
+    "expected_keywords": [
+      "伪代码",
+      "教你写一手漂亮的伪代码",
+      "详细规则",
+      "简单实例"
+    ]
+  },
+  {
+    "id": "doc09_fact",
+    "suite": "fact",
+    "query": "《刷题技巧》中关于“教你写一手漂亮的伪代码”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+    "source_filename": "刷题技巧.md",
+    "relevant_parent_ids": [
+      "0ea5835c-7901-4149-b93f-9d7dfaefdd4e"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "0ea5835c-7901-4149-b93f-9d7dfaefdd4e",
+        "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_dccbab25"
+      }
+    ],
+    "expected_keywords": [
+      "伪代码",
+      "教你写一手漂亮的伪代码",
+      "详细规则",
+      "简单实例"
+    ]
+  },
+  {
+    "id": "doc09_heading",
+    "suite": "heading",
+    "query": "在《刷题技巧》的“按数据范围反推算法复杂度 > 处理字符（cctype）”部分，关于“cctype”记录了哪些要点？",
+    "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+    "source_filename": "刷题技巧.md",
+    "relevant_parent_ids": [
+      "4e492ace-26fc-4007-858d-c4b40ae948db"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4e492ace-26fc-4007-858d-c4b40ae948db",
+        "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_a47a19d2"
+      }
+    ],
+    "expected_keywords": [
+      "按数据范围反推算法复杂度",
+      "处理字符",
+      "cctype",
+      "头文件",
+      "字符处理库"
+    ]
+  },
+  {
+    "id": "doc09_position",
+    "suite": "heading",
+    "query": "《刷题技巧》中提到的“cctype”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+    "source_filename": "刷题技巧.md",
+    "relevant_parent_ids": [
+      "4e492ace-26fc-4007-858d-c4b40ae948db"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4e492ace-26fc-4007-858d-c4b40ae948db",
+        "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_a47a19d2"
+      }
+    ],
+    "expected_keywords": [
+      "按数据范围反推算法复杂度",
+      "处理字符",
+      "cctype",
+      "头文件",
+      "字符处理库"
+    ]
+  },
+  {
+    "id": "doc09_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《刷题技巧》中“教你写一手漂亮的伪代码”与“P12132”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+    "source_filename": "刷题技巧.md",
+    "relevant_parent_ids": [
+      "0ea5835c-7901-4149-b93f-9d7dfaefdd4e",
+      "1f774f85-726a-42a0-bcaf-c9d788e1cbfb"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "0ea5835c-7901-4149-b93f-9d7dfaefdd4e",
+        "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_dccbab25"
+      },
+      {
+        "parent_id": "1f774f85-726a-42a0-bcaf-c9d788e1cbfb",
+        "document_id": "46deb3d9-fa52-4c48-93b2-1e8e47061a67",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_7278652a"
+      }
+    ],
+    "expected_keywords": [
+      "伪代码",
+      "教你写一手漂亮的伪代码",
+      "详细规则",
+      "简单实例",
+      "看了题模拟不了",
+      "看题分析规律",
+      "P12132",
+      "蓝桥杯"
+    ]
+  },
+  {
+    "id": "doc10_detail",
+    "suite": "fact",
+    "query": "《反脆弱》中提到的“反脆弱是一种从随机事件”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+    "source_filename": "反脆弱.md",
+    "relevant_parent_ids": [
+      "5c7d1413-bb0f-459b-8bc3-4f341b5c2338"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "5c7d1413-bb0f-459b-8bc3-4f341b5c2338",
+        "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_b50fea65"
+      }
+    ],
+    "expected_keywords": [
+      "反脆弱是一种从随机事件",
+      "波动",
+      "压力和不确定性中获益的能"
+    ]
+  },
+  {
+    "id": "doc10_fact",
+    "suite": "fact",
+    "query": "《反脆弱》中关于“反脆弱是一种从随机事件”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+    "source_filename": "反脆弱.md",
+    "relevant_parent_ids": [
+      "5c7d1413-bb0f-459b-8bc3-4f341b5c2338"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "5c7d1413-bb0f-459b-8bc3-4f341b5c2338",
+        "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_b50fea65"
+      }
+    ],
+    "expected_keywords": [
+      "反脆弱是一种从随机事件",
+      "波动",
+      "压力和不确定性中获益的能"
+    ]
+  },
+  {
+    "id": "doc10_heading",
+    "suite": "heading",
+    "query": "在《反脆弱》的“处理复杂系统的波动办法 > 3、减法优于加法”部分，关于“面对复杂系统”记录了哪些要点？",
+    "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+    "source_filename": "反脆弱.md",
+    "relevant_parent_ids": [
+      "63b18e96-11d1-490c-bf0f-3753c5b433b7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "63b18e96-11d1-490c-bf0f-3753c5b433b7",
+        "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_427ada0a"
+      }
+    ],
+    "expected_keywords": [
+      "处理复杂系统的波动办法",
+      "减法优于加法",
+      "面对复杂系统",
+      "改善它不一定要不断增加新",
+      "的东西"
+    ]
+  },
+  {
+    "id": "doc10_position",
+    "suite": "heading",
+    "query": "《反脆弱》中提到的“面对复杂系统”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+    "source_filename": "反脆弱.md",
+    "relevant_parent_ids": [
+      "63b18e96-11d1-490c-bf0f-3753c5b433b7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "63b18e96-11d1-490c-bf0f-3753c5b433b7",
+        "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_427ada0a"
+      }
+    ],
+    "expected_keywords": [
+      "处理复杂系统的波动办法",
+      "减法优于加法",
+      "面对复杂系统",
+      "改善它不一定要不断增加新",
+      "的东西"
+    ]
+  },
+  {
+    "id": "doc10_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《反脆弱》中“反脆弱是一种从随机事件”与“不把自己锁死在固定计划中”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+    "source_filename": "反脆弱.md",
+    "relevant_parent_ids": [
+      "5c7d1413-bb0f-459b-8bc3-4f341b5c2338",
+      "c87b0685-499c-469b-af1c-edc51fc532c9"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "5c7d1413-bb0f-459b-8bc3-4f341b5c2338",
+        "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_b50fea65"
+      },
+      {
+        "parent_id": "c87b0685-499c-469b-af1c-edc51fc532c9",
+        "document_id": "1068ea98-1ef4-427c-83c1-81849bc589ab",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_f28075ed"
+      }
+    ],
+    "expected_keywords": [
+      "反脆弱是一种从随机事件",
+      "波动",
+      "压力和不确定性中获益的能",
+      "其他核心原则",
+      "理性漫游者",
+      "不把自己锁死在固定计划中",
+      "而是在探索和随机变化中保",
+      "持理性"
+    ]
+  },
+  {
+    "id": "doc11_detail",
+    "suite": "fact",
+    "query": "《手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程》中提到的“目的”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+    "source_filename": "手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程.md",
+    "relevant_parent_ids": [
+      "e1785efb-08c6-4484-8aa6-5613d5d8f15f"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e1785efb-08c6-4484-8aa6-5613d5d8f15f",
+        "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_6cbb9513"
+      }
+    ],
+    "expected_keywords": [
+      "目的",
+      "了解做深度学习项目的流程",
+      "yolo"
+    ]
+  },
+  {
+    "id": "doc11_fact",
+    "suite": "fact",
+    "query": "《手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程》中关于“目的”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+    "source_filename": "手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程.md",
+    "relevant_parent_ids": [
+      "e1785efb-08c6-4484-8aa6-5613d5d8f15f"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e1785efb-08c6-4484-8aa6-5613d5d8f15f",
+        "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_6cbb9513"
+      }
+    ],
+    "expected_keywords": [
+      "目的",
+      "了解做深度学习项目的流程",
+      "yolo"
+    ]
+  },
+  {
+    "id": "doc11_heading",
+    "suite": "heading",
+    "query": "在《手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程》的“训练文件含义解释 > run(训练好之后的结果) > train(训练结果目录) > curve(曲线)结尾的图片”部分，关于“置信度”记录了哪些要点？",
+    "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+    "source_filename": "手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程.md",
+    "relevant_parent_ids": [
+      "8627c1fd-1f51-48e1-96ce-1c1555eae447"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "8627c1fd-1f51-48e1-96ce-1c1555eae447",
+        "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_480426fd"
+      }
+    ],
+    "expected_keywords": [
+      "训练文件含义解释",
+      "run",
+      "训练好之后的结果",
+      "置信度",
+      "Confidence",
+      "模型单次预测的为该类型的"
+    ]
+  },
+  {
+    "id": "doc11_position",
+    "suite": "heading",
+    "query": "《手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程》中提到的“置信度”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+    "source_filename": "手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程.md",
+    "relevant_parent_ids": [
+      "8627c1fd-1f51-48e1-96ce-1c1555eae447"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "8627c1fd-1f51-48e1-96ce-1c1555eae447",
+        "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_480426fd"
+      }
+    ],
+    "expected_keywords": [
+      "训练文件含义解释",
+      "run",
+      "训练好之后的结果",
+      "置信度",
+      "Confidence",
+      "模型单次预测的为该类型的"
+    ]
+  },
+  {
+    "id": "doc11_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程》中“目的”与“深度学习入门项目”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+    "source_filename": "手把手带你做 YOLO12 手势识别项目：从数据集到模型部署，完整入门深度学习流程.md",
+    "relevant_parent_ids": [
+      "e1785efb-08c6-4484-8aa6-5613d5d8f15f",
+      "d4b28508-3908-4fd0-9d1e-1815ff41e982"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e1785efb-08c6-4484-8aa6-5613d5d8f15f",
+        "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_6cbb9513"
+      },
+      {
+        "parent_id": "d4b28508-3908-4fd0-9d1e-1815ff41e982",
+        "document_id": "c0243d36-3aac-494c-8302-a5cbbfc76c20",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_fcb5335a"
+      }
+    ],
+    "expected_keywords": [
+      "目的",
+      "了解做深度学习项目的流程",
+      "yolo",
+      "训练文件含义解释",
+      "run",
+      "训练好之后的结果",
+      "深度学习入门项目",
+      "img/Pasted"
+    ]
+  },
+  {
+    "id": "doc12_detail",
+    "suite": "fact",
+    "query": "《知识点》中提到的“黑马微服务文档”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+    "source_filename": "知识点.md",
+    "relevant_parent_ids": [
+      "d0837309-5b9e-47c7-a2d8-5f31d2b23886"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "d0837309-5b9e-47c7-a2d8-5f31d2b23886",
+        "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_de987269"
+      }
+    ],
+    "expected_keywords": [
+      "黑马微服务文档"
+    ]
+  },
+  {
+    "id": "doc12_fact",
+    "suite": "fact",
+    "query": "《知识点》中关于“黑马微服务文档”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+    "source_filename": "知识点.md",
+    "relevant_parent_ids": [
+      "d0837309-5b9e-47c7-a2d8-5f31d2b23886"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "d0837309-5b9e-47c7-a2d8-5f31d2b23886",
+        "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_de987269"
+      }
+    ],
+    "expected_keywords": [
+      "黑马微服务文档"
+    ]
+  },
+  {
+    "id": "doc12_heading",
+    "suite": "heading",
+    "query": "在《知识点》的“OpenFeign > 开启 Feign 降级”部分，关于“优化方向”记录了哪些要点？",
+    "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+    "source_filename": "知识点.md",
+    "relevant_parent_ids": [
+      "8c2ece6b-37aa-4260-9e81-b619a6166e73"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "8c2ece6b-37aa-4260-9e81-b619a6166e73",
+        "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+        "block_id": "b_f10d4409",
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_180962f7"
+      }
+    ],
+    "expected_keywords": [
+      "OpenFeign",
+      "开启",
+      "Feign",
+      "优化方向",
+      "具体措施",
+      "配置"
+    ]
+  },
+  {
+    "id": "doc12_position",
+    "suite": "heading",
+    "query": "《知识点》中提到的“优化方向”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+    "source_filename": "知识点.md",
+    "relevant_parent_ids": [
+      "8c2ece6b-37aa-4260-9e81-b619a6166e73"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "8c2ece6b-37aa-4260-9e81-b619a6166e73",
+        "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+        "block_id": "b_f10d4409",
+        "chunk_index": 1,
+        "child_index": 2,
+        "export_child_id": "c_6ab5490b"
+      }
+    ],
+    "expected_keywords": [
+      "OpenFeign",
+      "开启",
+      "Feign",
+      "优化方向",
+      "具体措施",
+      "配置"
+    ]
+  },
+  {
+    "id": "doc12_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《知识点》中“黑马微服务文档”与“功能模块”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+    "source_filename": "知识点.md",
+    "relevant_parent_ids": [
+      "d0837309-5b9e-47c7-a2d8-5f31d2b23886",
+      "1b08e57f-5749-4e2c-bff4-963efc5b751f"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "d0837309-5b9e-47c7-a2d8-5f31d2b23886",
+        "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_de987269"
+      },
+      {
+        "parent_id": "1b08e57f-5749-4e2c-bff4-963efc5b751f",
+        "document_id": "e09293aa-e93b-4c27-9a6d-ce431f93446d",
+        "block_id": "b_04135d65",
+        "chunk_index": 0,
+        "child_index": 2,
+        "export_child_id": "c_10161c8c"
+      }
+    ],
+    "expected_keywords": [
+      "黑马微服务文档",
+      "SkyWalking",
+      "es",
+      "全链路监控"
+    ]
+  },
+  {
+    "id": "doc13_detail",
+    "suite": "fact",
+    "query": "《知识点总结》中提到的“Pasted”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+    "source_filename": "知识点总结.md",
+    "relevant_parent_ids": [
+      "502fa1a0-f265-4100-bac0-2d0ef810ea52"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "502fa1a0-f265-4100-bac0-2d0ef810ea52",
+        "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_04a50f5e"
+      }
+    ],
+    "expected_keywords": [
+      "ieda",
+      "快捷键",
+      "Pasted",
+      "image",
+      "png"
+    ]
+  },
+  {
+    "id": "doc13_fact",
+    "suite": "fact",
+    "query": "《知识点总结》中关于“Pasted”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+    "source_filename": "知识点总结.md",
+    "relevant_parent_ids": [
+      "502fa1a0-f265-4100-bac0-2d0ef810ea52"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "502fa1a0-f265-4100-bac0-2d0ef810ea52",
+        "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_04a50f5e"
+      }
+    ],
+    "expected_keywords": [
+      "ieda",
+      "快捷键",
+      "Pasted",
+      "image",
+      "png"
+    ]
+  },
+  {
+    "id": "doc13_heading",
+    "suite": "heading",
+    "query": "在《知识点总结》的“包装类 > java绘图”部分，关于“Pasted”记录了哪些要点？",
+    "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+    "source_filename": "知识点总结.md",
+    "relevant_parent_ids": [
+      "dd24f06e-4eb3-471d-82b4-9c120aed7710"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "dd24f06e-4eb3-471d-82b4-9c120aed7710",
+        "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ee84ff71"
+      }
+    ],
+    "expected_keywords": [
+      "包装类",
+      "java",
+      "绘图",
+      "Pasted",
+      "image",
+      "png"
+    ]
+  },
+  {
+    "id": "doc13_position",
+    "suite": "heading",
+    "query": "《知识点总结》中提到的“Pasted”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+    "source_filename": "知识点总结.md",
+    "relevant_parent_ids": [
+      "dd24f06e-4eb3-471d-82b4-9c120aed7710"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "dd24f06e-4eb3-471d-82b4-9c120aed7710",
+        "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ee84ff71"
+      }
+    ],
+    "expected_keywords": [
+      "包装类",
+      "java",
+      "绘图",
+      "Pasted",
+      "image",
+      "png"
+    ]
+  },
+  {
+    "id": "doc13_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《知识点总结》中“Pasted”与“Java”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+    "source_filename": "知识点总结.md",
+    "relevant_parent_ids": [
+      "502fa1a0-f265-4100-bac0-2d0ef810ea52",
+      "6d81dbee-55f7-4614-9ff1-63f0f683bc53"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "502fa1a0-f265-4100-bac0-2d0ef810ea52",
+        "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_04a50f5e"
+      },
+      {
+        "parent_id": "6d81dbee-55f7-4614-9ff1-63f0f683bc53",
+        "document_id": "00990aec-afea-4884-80fe-96acbe62b216",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_1e8b2276"
+      }
+    ],
+    "expected_keywords": [
+      "ieda",
+      "快捷键",
+      "Pasted",
+      "image",
+      "png",
+      "java",
+      "实体类",
+      "PO"
+    ]
+  },
+  {
+    "id": "doc14_detail",
+    "suite": "fact",
+    "query": "《踩坑经验》中提到的“商业模式”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+    "source_filename": "踩坑经验.md",
+    "relevant_parent_ids": [
+      "6a3f4b5d-df9c-492f-972e-087bc4a95ec1"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "6a3f4b5d-df9c-492f-972e-087bc4a95ec1",
+        "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+        "block_id": "b_cd083e16",
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_610e7e22"
+      }
+    ],
+    "expected_keywords": [
+      "商业模式",
+      "开发难度",
+      "前期成本"
+    ]
+  },
+  {
+    "id": "doc14_fact",
+    "suite": "fact",
+    "query": "《踩坑经验》中关于“平台”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+    "source_filename": "踩坑经验.md",
+    "relevant_parent_ids": [
+      "6a3f4b5d-df9c-492f-972e-087bc4a95ec1"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "6a3f4b5d-df9c-492f-972e-087bc4a95ec1",
+        "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+        "block_id": "b_b555805d",
+        "chunk_index": 0,
+        "child_index": 3,
+        "export_child_id": "c_0046bc9f"
+      }
+    ],
+    "expected_keywords": [
+      "商业模式",
+      "开发难度",
+      "前期成本"
+    ]
+  },
+  {
+    "id": "doc14_heading",
+    "suite": "heading",
+    "query": "在《踩坑经验》的“八、Boss 行为设计 > 8.5 Boss 类型 > 小 Boss A：冲撞型”部分，关于“教学关使用”记录了哪些要点？",
+    "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+    "source_filename": "踩坑经验.md",
+    "relevant_parent_ids": [
+      "e8092593-3ef9-4776-8e5a-d4b05c2c2033"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e8092593-3ef9-4776-8e5a-d4b05c2c2033",
+        "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_a40804be"
+      }
+    ],
+    "expected_keywords": [
+      "Boss",
+      "行为设计",
+      "类型",
+      "教学关使用",
+      "主动追击",
+      "预警"
+    ]
+  },
+  {
+    "id": "doc14_position",
+    "suite": "heading",
+    "query": "《踩坑经验》中提到的“教学关使用”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+    "source_filename": "踩坑经验.md",
+    "relevant_parent_ids": [
+      "e8092593-3ef9-4776-8e5a-d4b05c2c2033"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "e8092593-3ef9-4776-8e5a-d4b05c2c2033",
+        "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_a40804be"
+      }
+    ],
+    "expected_keywords": [
+      "Boss",
+      "行为设计",
+      "类型",
+      "教学关使用",
+      "主动追击",
+      "预警"
+    ]
+  },
+  {
+    "id": "doc14_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《踩坑经验》中“平台”与“删除独立生命值系统”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+    "source_filename": "踩坑经验.md",
+    "relevant_parent_ids": [
+      "6a3f4b5d-df9c-492f-972e-087bc4a95ec1",
+      "588acdbb-9e34-4aa3-bc7a-fb086774bcc6"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "6a3f4b5d-df9c-492f-972e-087bc4a95ec1",
+        "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+        "block_id": "b_b555805d",
+        "chunk_index": 0,
+        "child_index": 3,
+        "export_child_id": "c_0046bc9f"
+      },
+      {
+        "parent_id": "588acdbb-9e34-4aa3-bc7a-fb086774bcc6",
+        "document_id": "59e65c06-89a7-4f3b-a180-5ea67ec6ac18",
+        "block_id": "b_2befaa5a",
+        "chunk_index": 0,
+        "child_index": 2,
+        "export_child_id": "c_95a8e71c"
+      }
+    ],
+    "expected_keywords": [
+      "商业模式",
+      "开发难度",
+      "前期成本",
+      "十七",
+      "版本更新摘要",
+      "相较旧版",
+      "GDD",
+      "本版做了以下统一"
+    ]
+  },
+  {
+    "id": "doc15_detail",
+    "suite": "fact",
+    "query": "《项目技术》中提到的“作为一名软件开发工程师”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+    "source_filename": "项目技术.md",
+    "relevant_parent_ids": [
+      "22b2611b-7cb2-4337-8117-ef57d407be63"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "22b2611b-7cb2-4337-8117-ef57d407be63",
+        "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_e4dc058b"
+      }
+    ],
+    "expected_keywords": [
+      "软件开发整体介绍",
+      "作为一名软件开发工程师",
+      "我们需要了解在软件开发过",
+      "程中的开发流程"
+    ]
+  },
+  {
+    "id": "doc15_fact",
+    "suite": "fact",
+    "query": "《项目技术》中关于“作为一名软件开发工程师”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+    "source_filename": "项目技术.md",
+    "relevant_parent_ids": [
+      "22b2611b-7cb2-4337-8117-ef57d407be63"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "22b2611b-7cb2-4337-8117-ef57d407be63",
+        "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_e4dc058b"
+      }
+    ],
+    "expected_keywords": [
+      "软件开发整体介绍",
+      "作为一名软件开发工程师",
+      "我们需要了解在软件开发过",
+      "程中的开发流程"
+    ]
+  },
+  {
+    "id": "doc15_heading",
+    "suite": "heading",
+    "query": "在《项目技术》的“1. Redis入门 > 3. Redis常用命令 > 3.4 集合操作命令”部分，关于“Redis”记录了哪些要点？",
+    "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+    "source_filename": "项目技术.md",
+    "relevant_parent_ids": [
+      "4e4d6649-95f4-4dab-a8f0-cd7809af1c6c"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4e4d6649-95f4-4dab-a8f0-cd7809af1c6c",
+        "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_4f9ef095"
+      }
+    ],
+    "expected_keywords": [
+      "Redis",
+      "入门",
+      "常用命令",
+      "set",
+      "string"
+    ]
+  },
+  {
+    "id": "doc15_position",
+    "suite": "heading",
+    "query": "《项目技术》中提到的“Redis”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+    "source_filename": "项目技术.md",
+    "relevant_parent_ids": [
+      "4e4d6649-95f4-4dab-a8f0-cd7809af1c6c"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "4e4d6649-95f4-4dab-a8f0-cd7809af1c6c",
+        "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_4f9ef095"
+      }
+    ],
+    "expected_keywords": [
+      "Redis",
+      "入门",
+      "常用命令",
+      "set",
+      "string"
+    ]
+  },
+  {
+    "id": "doc15_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《项目技术》中“作为一名软件开发工程师”与“直接使用前后端联调测试”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+    "source_filename": "项目技术.md",
+    "relevant_parent_ids": [
+      "22b2611b-7cb2-4337-8117-ef57d407be63",
+      "15c681ed-45f2-4a3d-a93c-3780858a8ac7"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "22b2611b-7cb2-4337-8117-ef57d407be63",
+        "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_e4dc058b"
+      },
+      {
+        "parent_id": "15c681ed-45f2-4a3d-a93c-3780858a8ac7",
+        "document_id": "0e54ff39-ee4d-4b08-87f0-137c7af3a250",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_af3879eb"
+      }
+    ],
+    "expected_keywords": [
+      "软件开发整体介绍",
+      "作为一名软件开发工程师",
+      "我们需要了解在软件开发过",
+      "程中的开发流程",
+      "Apache",
+      "POI",
+      "导出运营数据",
+      "直接使用前后端联调测试"
+    ]
+  },
+  {
+    "id": "doc16_detail",
+    "suite": "fact",
+    "query": "《项目流程》中提到的“需求文档”具体指什么？请根据相关内容说明它的作用或要点。",
+    "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+    "source_filename": "项目流程.md",
+    "relevant_parent_ids": [
+      "fb36244a-488e-4c06-bd17-c53e2ba9ed32"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "fb36244a-488e-4c06-bd17-c53e2ba9ed32",
+        "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ac51958b"
+      }
+    ],
+    "expected_keywords": [
+      "需求文档",
+      "可行性分析",
+      "给逻辑"
+    ]
+  },
+  {
+    "id": "doc16_fact",
+    "suite": "fact",
+    "query": "《项目流程》中关于“需求文档”的内容主要说明了什么？请概括关键结论。",
+    "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+    "source_filename": "项目流程.md",
+    "relevant_parent_ids": [
+      "fb36244a-488e-4c06-bd17-c53e2ba9ed32"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "fb36244a-488e-4c06-bd17-c53e2ba9ed32",
+        "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ac51958b"
+      }
+    ],
+    "expected_keywords": [
+      "需求文档",
+      "可行性分析",
+      "给逻辑"
+    ]
+  },
+  {
+    "id": "doc16_heading",
+    "suite": "heading",
+    "query": "在《项目流程》的“PostHog（分析用户行为，提供反馈，免费）”部分，关于“功能模块”记录了哪些要点？",
+    "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+    "source_filename": "项目流程.md",
+    "relevant_parent_ids": [
+      "96a59af2-577b-4458-b98a-1e5b0602b90d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "96a59af2-577b-4458-b98a-1e5b0602b90d",
+        "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+        "block_id": "b_4890eb86",
+        "chunk_index": 0,
+        "child_index": 2,
+        "export_child_id": "c_bb574f7f"
+      }
+    ],
+    "expected_keywords": [
+      "PostHog",
+      "分析用户行为",
+      "提供反馈",
+      "作用",
+      "帮你",
+      "看清用户怎么用产品"
+    ]
+  },
+  {
+    "id": "doc16_position",
+    "suite": "heading",
+    "query": "《项目流程》中提到的“功能模块”主要位于哪个章节或内容块？该处主要说明什么？",
+    "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+    "source_filename": "项目流程.md",
+    "relevant_parent_ids": [
+      "96a59af2-577b-4458-b98a-1e5b0602b90d"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "96a59af2-577b-4458-b98a-1e5b0602b90d",
+        "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+        "block_id": "b_4890eb86",
+        "chunk_index": 1,
+        "child_index": 3,
+        "export_child_id": "c_5969f6bb"
+      }
+    ],
+    "expected_keywords": [
+      "PostHog",
+      "分析用户行为",
+      "提供反馈",
+      "作用",
+      "帮你",
+      "看清用户怎么用产品"
+    ]
+  },
+  {
+    "id": "doc16_synthesis",
+    "suite": "synthesis",
+    "query": "请结合《项目流程》中“需求文档”与“功能模块”相关内容，概括文档涉及的主题和处理思路。",
+    "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+    "source_filename": "项目流程.md",
+    "relevant_parent_ids": [
+      "fb36244a-488e-4c06-bd17-c53e2ba9ed32",
+      "6173e08c-cad7-4202-8bc2-8c73ae401fb5"
+    ],
+    "relevant_chunk_refs": [
+      {
+        "parent_id": "fb36244a-488e-4c06-bd17-c53e2ba9ed32",
+        "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+        "block_id": null,
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_ac51958b"
+      },
+      {
+        "parent_id": "6173e08c-cad7-4202-8bc2-8c73ae401fb5",
+        "document_id": "8cbdee7d-cdf6-45d6-8b0f-37682c02f50c",
+        "block_id": "b_0f5c8797",
+        "chunk_index": 0,
+        "child_index": 1,
+        "export_child_id": "c_5b019f04"
+      }
+    ],
+    "expected_keywords": [
+      "需求文档",
+      "可行性分析",
+      "给逻辑",
+      "skywalking",
+      "后端错误追踪",
+      "功能模块",
+      "具体作用",
+      "你能看到什么"
+    ]
+  }
+]
