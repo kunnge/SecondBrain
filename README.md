@@ -1,11 +1,11 @@
 # 页面展示
 ## 首页
 
-![](./img/Pasted image 20261102174906.png)
+![](./img/home.png)
 
 ## 知识库管理页面
 
-![](./img/Pasted image 20261102174955.png)
+![](./img/knowledge-base.png)
 
 # 文档切分与检索逻辑
 ## 切割逻辑
