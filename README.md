@@ -1,6 +1,11 @@
-[img/Pasted image 20261102174906.png]
 # 页面展示
 ## 首页
+
+![](./img/Pasted image 20261102174906.png)
+
+## 知识库管理页面
+
+![](./img/Pasted image 20261102174955.png)
 
 # 文档切分与检索逻辑
 ## 切割逻辑
@@ -89,5 +94,4 @@ npm run dev
 | `POST /conversations/chat`                                               | 聊天 JSON，见下文                | 提交新问题并返回 SSE                                         |
 | `POST /conversations/{conversation_id}/messages/{message_id}/edit`       | 编辑 JSON，见下文                | 编辑用户提问并流式生成新回答                                       |
 | `POST /conversations/{conversation_id}/messages/{message_id}/regenerate` | 重答 JSON，见下文                | 重生成指定 AI 回答                                          |
-
 
